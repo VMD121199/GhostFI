@@ -1,0 +1,49 @@
+nav {
+  position: fixed;
+  top: 0; left: 0; right: 0;
+  z-index: 100;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0 28px;
+  height: 60px;
+  background: var(--surface);
+  box-shadow: 0 2px 0 var(--shadow-d), 0 -1px 0 var(--shadow-l);
+}
+.nav-logo {
+  display: flex; align-items: center; gap: 9px; cursor: pointer;
+}
+.nav-logo-wrap {
+  width: 32px; height: 32px; border-radius: var(--r-sm);
+  background: var(--surface); box-shadow: var(--neu-sm);
+  display: flex; align-items: center; justify-content: center;
+}
+.nav-logo-text {
+  font-size: 14px; font-weight: 700; color: var(--white);
+  letter-spacing: 0.12em; text-transform: uppercase;
+}
+.nav-links {
+  display: flex; align-items: center; gap: 3px;
+}
+.nav-link {
+  padding: 6px 12px; font-size: 10px; font-weight: 700;
+  color: var(--t2); cursor: pointer; border-radius: var(--r-sm);
+  transition: all .15s; letter-spacing: .07em; text-transform: uppercase;
+  background: var(--surface);
+}
+.nav-link:hover { color: var(--t1); box-shadow: var(--neu-sm); }
+.nav-link.active { color: var(--white); box-shadow: var(--neu-in-sm); }
+.wallet-btn {
+  display: flex; align-items: center; gap: 7px;
+  padding: 8px 16px; font-family: var(--mono);
+  font-size: 10px; font-weight: 600; letter-spacing: .04em;
+  background: var(--surface); color: var(--white);
+  border: none; border-radius: var(--r-sm);
+  cursor: pointer; box-shadow: var(--neu); transition: all .15s;
+}
+.wallet-btn:hover { box-shadow: var(--neu-sm); }
+.wdot {
+  width: 6px; height: 6px; border-radius: 50%;
+  background: var(--green); box-shadow: 0 0 5px var(--green);
+  animation: blink 2.5s ease infinite;
+}
