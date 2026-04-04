@@ -29,6 +29,13 @@ export function AppProvider({ children }) {
   const [agentRoyalty, setAgentRoyalty] = useState('5%')
   const [agentListingPrice, setAgentListingPrice] = useState('Free to copy')
 
+  // Minted agents list — persists across navigation
+  const [myAgents, setMyAgents] = useState([])
+
+  const addMyAgent = (agent) => {
+    setMyAgents(prev => [agent, ...prev])
+  }
+
   const showPage = (id) => {
     setPrevPage(page)
     setPage(id)
@@ -146,6 +153,7 @@ export function AppProvider({ children }) {
       agentRoyalty, setAgentRoyalty,
       agentListingPrice, setAgentListingPrice,
       resetCreate, forkAgent,
+      myAgents, addMyAgent,
     }}>
       {children}
     </AppContext.Provider>

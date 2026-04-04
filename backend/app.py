@@ -132,7 +132,7 @@ class DeployAgent(Resource):
                 storageUri=storage_uri,
             )
             result = minter.mint(metadata)
-            return {
+            response = {
                 'status': 'ok',
                 'tokenId': result.tokenId,
                 'txHash': result.txHash,
@@ -143,7 +143,7 @@ class DeployAgent(Resource):
         except Exception as e:
             mock_id = str(random.randint(1000, 9999))
             mock_tx = '0x' + ''.join(random.choices('0123456789abcdef', k=12)) + '…'
-            return {
+            response = {
                 'status': 'ok',
                 'tokenId': mock_id,
                 'txHash': mock_tx,
@@ -152,6 +152,35 @@ class DeployAgent(Resource):
                 'network': 'Hedera EVM testnet',
                 'error': str(e),
             }
+
+        # Persist to store regardless of live/mock result
+        from services.agent_store import save_agent
+        save_agent({
+            **strategy_config,
+            'tokenId':    response['tokenId'],
+            'txHash':     response['txHash'],
+            'contract':   response['contract'],
+            'proof':      response['proof'],
+            'network':    response['network'],
+            'status':     'running',
+            'statusLabel':'Running',
+            'owner':      body.get('owner', os.environ.get('AGENT_ADDRESS', '')),
+        })
+        return response
+
+
+# ── /api/agents ──────────────────────────────────────────────────────────────
+# Return all deployed agents for a wallet address
+class AgentList(Resource):
+    def get(self):
+        address = request.args.get('address', '')
+        enrich  = request.args.get('enrich', 'false').lower() == 'true'
+        from services.agent_store import get_agents, enrich_from_chain
+        print(f"Fetching agents for address={address}, enrich={enrich}")
+        agents = get_agents(owner_address=address or None)
+        if enrich:
+            agents = enrich_from_chain(agents)
+        return {'status': 'ok', 'agents': agents, 'count': len(agents)}
 
 
 # ── /api/agent/start ─────────────────────────────────────────────────────────
@@ -277,6 +306,7 @@ class Health(Resource):
 
 api.add_resource(Health,      '/api/health')
 api.add_resource(ScanPools,   '/api/scan')
+api.add_resource(AgentList,   '/api/agents')
 api.add_resource(DeployAgent, '/api/agent/deploy')
 api.add_resource(StartAgent,  '/api/agent/start')
 api.add_resource(PoolList,    '/api/pools')

@@ -44,7 +44,7 @@ const INFT_NUM = Math.floor(Math.random() * 9000 + 1000)
 
 export default function CreateAgent() {
   const {
-    page, showPage, openPool,
+    page, showPage, openPool, addMyAgent,
     createStep, setCreateStep,
     agentSector, setAgentSector,
     agentEmoji, setAgentEmoji,
@@ -161,6 +161,25 @@ export default function CreateAgent() {
       result = { tokenId: INFT_NUM, txHash: '0x7f3a…d291', contract: '0x69242f…726C', proof: '0x4f2a…c831', network: 'Hedera EVM testnet' }
     }
     setDeployResult(result)
+    addMyAgent({
+      name:        agentName || 'StableGhost v1',
+      emoji:       agentEmoji,
+      sector:      agentSector,
+      yield:       `+${agentTargetYield}%`,
+      pos:         true,
+      tvl:         agentCapital || '—',
+      copies:      'new',
+      inft:        `#${result.tokenId}`,
+      status:      'on',
+      statusLabel: 'Running',
+      txHash:      result.txHash,
+      contract:    result.contract,
+      proof:       result.proof,
+      model:       agentModel,
+      duration:    agentDuration,
+      risk:        agentRisk,
+      royalty:     agentRoyalty,
+    })
     setDeploying(false)
     setDeployed(true)
   }
@@ -660,7 +679,7 @@ export default function CreateAgent() {
                   Minting on ⬡ Hedera EVM
                 </div>
                 <div style={{ fontSize: 11, color: 'var(--t2)', lineHeight: 1.9, fontFamily: 'var(--mono)' }}>
-                  Standard: ERC-7857 (ERC721 + iNFT)<br />
+                  Standard: ERC-7857 (ERC721 extension)<br />
                   Metadata: 🔷 0G Storage (immutable)<br />
                   Proof: 0G Chain hash linked<br />
                   {/* Gas: ~$0.002 on Hedera testnet<br /> */}

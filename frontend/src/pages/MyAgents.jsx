@@ -1,3 +1,4 @@
+import { useState, useEffect } from 'react'
 import { useApp } from '../context/AppContext'
 import { AGENTS_DB } from '../data/agents'
 
@@ -10,9 +11,26 @@ const MY_AGENTS = [
 const BAR_HEIGHTS = [38, 52, 47, 68, 60, 82, 100]
 
 export default function MyAgents() {
-  const { page, showPage, resetCreate, openInft } = useApp()
+  const { page, showPage, resetCreate, openInft, myAgents, walletAddress } = useApp()
+  const [apiAgents, setApiAgents] = useState([])
+
+  useEffect(() => {
+    if (page !== 'myagents') return
+    const url = walletAddress
+      ? `http://localhost:5000/api/agents?address=${walletAddress}`
+      : 'http://localhost:5000/api/agents'
+    fetch(url)
+      .then(r => r.json())
+      .then(data => { if (data.agents) setApiAgents(data.agents) })
+      .catch(() => {})
+  }, [page, walletAddress])
 
   if (page !== 'myagents') return null
+
+  // API agents take priority, then context (optimistic), then static demo data
+  const allAgents = apiAgents.length > 0
+    ? apiAgents
+    : [...myAgents, ...MY_AGENTS]
 
   return (
     <div className="page active" style={{ paddingTop: 60 }}>
@@ -74,7 +92,7 @@ export default function MyAgents() {
 
         <div className="section-label" style={{ marginBottom: 14 }}>Active agents</div>
         <div className="mygrid">
-          {MY_AGENTS.map(agent => (
+          {allAgents.map(agent => (
             <div key={agent.name} className="mac" onClick={() => openInft(agent)}>
               <div className="mh">
                 <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
