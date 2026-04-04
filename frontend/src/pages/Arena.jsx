@@ -1,5 +1,6 @@
 import { useState } from 'react'
 import { useApp } from '../context/AppContext'
+import { findAgent } from '../data/agents'
 
 const YIELD_TABLE = [
   { rank: 1, emoji: '🌊', name: 'StableMax v2', creator: '0xGhost.eth', sector: 'Stablecoin', inft: true, yield: '+14.2%', tvl: '$820K', copies: 312, pos: true },
@@ -37,7 +38,7 @@ const rnumClass = (r) => r === 1 ? 'r1' : r === 2 ? 'r2' : r === 3 ? 'r3' : ''
 const pad = (n) => String(n).padStart(2, '0')
 
 export default function Arena() {
-  const { page, forkAgent } = useApp()
+  const { page, forkAgent, openInft } = useApp()
   const [tab, setTab] = useState('yield')
 
   if (page !== 'arena') return null
@@ -107,7 +108,8 @@ export default function Arena() {
               </thead>
               <tbody>
                 {YIELD_TABLE.map(a => (
-                  <tr key={a.name} className={rankClass(a.rank)}>
+                  <tr key={a.name} className={rankClass(a.rank)} style={{ cursor: 'pointer' }}
+                    onClick={() => { const ag = findAgent(a.name); if (ag) openInft(ag) }}>
                     <td><span className={`rnum ${rnumClass(a.rank)}`}>{pad(a.rank)}</span></td>
                     <td>
                       <div className="ar-name" style={{ display: 'flex', alignItems: 'center', gap: 7 }}>
@@ -123,7 +125,7 @@ export default function Arena() {
                     <td style={{ textAlign: 'right' }} className="cp-val">{a.copies}</td>
                     <td style={{ textAlign: 'right' }}>
                       <button className={`btn btn-sm ${a.rank === 1 ? 'btn-white' : 'btn-ghost'}`}
-                        onClick={() => a.emoji && forkAgent(a.name, a.sector, a.emoji)}>Fork →</button>
+                        onClick={(e) => { e.stopPropagation(); forkAgent(a.name, a.sector, a.emoji) }}>Fork →</button>
                     </td>
                   </tr>
                 ))}

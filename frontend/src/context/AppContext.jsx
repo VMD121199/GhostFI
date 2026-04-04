@@ -7,6 +7,8 @@ export function AppProvider({ children }) {
   const [walletConnected, setWalletConnected] = useState(false)
   const [walletAddress, setWalletAddress] = useState(null)
   const [walletModalOpen, setWalletModalOpen] = useState(false)
+  const [inftAgent, setInftAgent] = useState(null)
+  const [prevPage, setPrevPage] = useState('marketplace')
 
   // Create agent state
   const [createStep, setCreateStep] = useState(1)
@@ -20,7 +22,20 @@ export function AppProvider({ children }) {
   const [agentKits, setAgentKits] = useState(['0G Compute', 'Uniswap API'])
 
   const showPage = (id) => {
+    setPrevPage(page)
     setPage(id)
+    window.scrollTo(0, 0)
+  }
+
+  const openInft = (agent) => {
+    setPrevPage(page)
+    setInftAgent(agent)
+    setPage('inft-detail')
+    window.scrollTo(0, 0)
+  }
+
+  const goBack = () => {
+    setPage(prevPage || 'marketplace')
     window.scrollTo(0, 0)
   }
 
@@ -89,9 +104,10 @@ export function AppProvider({ children }) {
 
   return (
     <AppContext.Provider value={{
-      page, showPage,
+      page, showPage, goBack,
       walletConnected, setWalletConnected, walletAddress, walletModalOpen,
       setWalletModalOpen, connectWallet,
+      inftAgent, openInft,
       createStep, setCreateStep,
       agentSector, setAgentSector,
       agentEmoji, setAgentEmoji,

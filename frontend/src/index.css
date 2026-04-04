@@ -270,6 +270,47 @@ textarea.neu-input{resize:vertical;min-height:80px}
 .land-stat-val{font-size:22px;font-weight:700;color:var(--white);letter-spacing:-1px}
 .land-stat-label{font-size:9px;color:var(--t3);margin-top:4px;font-family:var(--mono);letter-spacing:.08em;text-transform:uppercase}
 
+/* ── BACK BUTTON ── */
+.back-btn{display:inline-flex;align-items:center;gap:6px;font-size:11px;color:var(--t3);font-family:var(--mono);cursor:pointer;margin-bottom:22px;padding:6px 0;transition:color .15s;background:none;border:none}
+.back-btn:hover{color:var(--t2)}
+
+/* ── INFT DETAIL ── */
+.inft-page{max-width:900px;margin:0 auto;padding:36px 28px}
+.inft-hero{background:var(--surface);border-radius:var(--r-lg);box-shadow:var(--neu-lg);padding:24px;display:flex;gap:20px;align-items:flex-start;margin-bottom:18px}
+.inft-av{width:80px;height:80px;border-radius:50%;background:var(--surface-up);box-shadow:var(--neu);display:flex;align-items:center;justify-content:center;font-size:38px;flex-shrink:0;border:1px solid #333}
+.inft-tags{display:flex;gap:6px;flex-wrap:wrap;margin-bottom:10px}
+.inft-perf{display:grid;grid-template-columns:repeat(5,1fr);gap:10px;margin-bottom:18px}
+.ipc{background:var(--surface);border-radius:var(--r-md);box-shadow:var(--neu-lg);padding:14px}
+.ipl{font-size:8px;text-transform:uppercase;letter-spacing:.10em;color:var(--t3);margin-bottom:6px;font-family:var(--mono)}
+.ipv{font-size:16px;font-weight:700;font-family:var(--mono)}
+.inft-tabs{display:flex;gap:4px;background:var(--surface-down);box-shadow:var(--neu-in);border-radius:var(--r-md);padding:4px;margin-bottom:18px;width:fit-content}
+.itab{padding:6px 16px;font-size:10px;font-weight:700;color:var(--t2);cursor:pointer;border-radius:var(--r-sm);transition:all .15s;border:none;background:transparent;font-family:var(--font);letter-spacing:.05em;text-transform:uppercase}
+.itab.active{background:var(--surface);color:var(--white);box-shadow:var(--neu-sm)}
+.ipanel{display:none}.ipanel.active{display:block}
+.twolay{display:grid;grid-template-columns:1fr 1fr;gap:16px}
+.spb{flex:1;border-radius:2px 2px 0 0;background:var(--green);opacity:.4}.spb.hi{opacity:.9}
+.ptable{width:100%;font-size:11px;border-collapse:collapse}
+.ptable th{padding:8px 12px;text-align:left;font-size:9px;color:var(--t3);background:var(--surface-down);box-shadow:inset 0 -1px 0 var(--shadow-d);font-family:var(--mono);letter-spacing:.08em;text-transform:uppercase}
+.ptable td{padding:9px 12px;color:var(--t2);box-shadow:inset 0 -1px 0 var(--shadow-d);font-family:var(--mono);font-size:10px}
+.ptable tr:last-child td{box-shadow:none}
+
+/* ── POOL DETAIL ── */
+.pool-page{max-width:900px;margin:0 auto;padding:36px 28px}
+.pool-pair{font-size:22px;font-weight:700;color:var(--white);letter-spacing:-.5px;display:flex;align-items:center;gap:10px}
+.pool-sub{font-size:11px;color:var(--t3);margin-top:4px;font-family:var(--mono);display:flex;align-items:center;gap:6px}
+.conf-arc{position:relative;width:80px;height:80px}
+.conf-arc svg{width:80px;height:80px}
+.conf-score{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;font-size:18px;font-weight:700;font-family:var(--mono)}
+.pmgrid{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin:16px 0}
+.pmcard{background:var(--surface-down);border-radius:var(--r-md);box-shadow:var(--neu-in-sm);padding:12px}
+.pml{font-size:8px;text-transform:uppercase;letter-spacing:.10em;color:var(--t3);font-family:var(--mono);margin-bottom:6px}
+.pmv{font-size:16px;font-weight:700;font-family:var(--mono)}.pms{font-size:9px;color:var(--t3);font-family:var(--mono);margin-top:3px}
+.rb-row{display:flex;align-items:center;gap:12px;margin-bottom:9px}
+.rb-lbl{font-size:10px;color:var(--t2);font-family:var(--mono);min-width:110px}
+.rb-track{flex:1;height:5px;background:var(--surface-down);border-radius:3px;overflow:hidden;box-shadow:var(--neu-in-sm)}
+.rb-fill{height:100%;border-radius:3px}
+.rb-val{font-size:10px;font-weight:700;font-family:var(--mono);min-width:38px;text-align:right}
+
 /* ── DEPLOY SUCCESS ── */
 .done-panel{text-align:center;padding:40px 20px}
 .done-em{font-size:72px;margin-bottom:24px;display:block}

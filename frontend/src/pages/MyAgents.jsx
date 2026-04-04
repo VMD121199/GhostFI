@@ -1,13 +1,14 @@
 import { useApp } from '../context/AppContext'
+import { AGENTS_DB } from '../data/agents'
 
 const MY_AGENTS = [
-  { emoji: '🌊', name: 'StableMax v2', sector: 'Stablecoin', status: 'on', statusLabel: 'Live', yield: '+14.2%', tvl: '$820K', copies: 312 },
-  { emoji: '🏦', name: 'LendLoop Alpha', sector: 'Lending', status: 'on', statusLabel: 'Live', yield: '+11.8%', tvl: '$1.1M', copies: 198 },
-  { emoji: '👻', name: 'GhostStake v1', sector: 'Restaking', status: 'warn', statusLabel: 'Verifying', yield: '+8.1%', tvl: '$720K', copies: 'new' },
+  { ...AGENTS_DB.find(a => a.name === 'StableMax v2'),  status: 'on',   statusLabel: 'Live',      copies: 312 },
+  { ...AGENTS_DB.find(a => a.name === 'LendLoop Alpha'), status: 'on',   statusLabel: 'Live',      copies: 198 },
+  { ...AGENTS_DB.find(a => a.name === 'GhostStake v1'), status: 'warn', statusLabel: 'Verifying', copies: 'new' },
 ]
 
 export default function MyAgents() {
-  const { page, showPage, resetCreate } = useApp()
+  const { page, showPage, resetCreate, openInft } = useApp()
 
   if (page !== 'myagents') return null
 
@@ -44,7 +45,7 @@ export default function MyAgents() {
 
         <div className="mac-grid">
           {MY_AGENTS.map(agent => (
-            <div key={agent.name} className="mac">
+            <div key={agent.name} className="mac" style={{ cursor: 'pointer' }} onClick={() => openInft(agent)}>
               <div className="mac-head">
                 <div className="mac-id">
                   <div className="mac-em">{agent.emoji}</div>
@@ -74,7 +75,7 @@ export default function MyAgents() {
                   </div>
                 </div>
               </div>
-              <div className="mac-ftr">
+              <div className="mac-ftr" onClick={e => e.stopPropagation()}>
                 <button className="btn btn-sm btn-ghost" style={{ flex: 1, justifyContent: 'center' }}>Logs</button>
                 <button className="btn btn-sm btn-ghost" style={{ flex: 1, justifyContent: 'center' }}>Pause</button>
                 <button className="btn btn-sm btn-ghost" style={{ flex: 1, justifyContent: 'center', color: 'var(--red)' }}>Stop</button>

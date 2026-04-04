@@ -1,7 +1,7 @@
 import { useState } from 'react'
 import { useApp } from '../context/AppContext'
 import './Nav.css'
-
+import logo from '../images/logo.jpg'
 const navLinks = [
   { id: 'marketplace', label: 'Marketplace' },
   { id: 'create', label: 'Create' },
@@ -17,7 +17,8 @@ export default function Nav() {
     <nav>
       <div className="nav-logo" onClick={() => showPage(walletConnected ? 'marketplace' : 'landing')}>
         <div className="nav-logo-wrap">
-          <span style={{ fontSize: 18 }}>👻</span>
+          {/* <span style={{ fontSize: 18 }}>👻</span> */}
+          <img src={logo} alt="Logo" style={{ width: 24, height: 24, objectFit: 'contain' }} />
         </div>
         <span className="nav-logo-text">GhostFi</span>
       </div>

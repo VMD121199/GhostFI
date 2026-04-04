@@ -6,6 +6,8 @@ import Marketplace from './pages/Marketplace'
 import CreateAgent from './pages/CreateAgent'
 import MyAgents from './pages/MyAgents'
 import Arena from './pages/Arena'
+import InftDetail from './pages/InftDetail'
+import PoolDetail from './pages/PoolDetail'
 
 export default function App() {
   return (
@@ -17,6 +19,8 @@ export default function App() {
       <CreateAgent />
       <MyAgents />
       <Arena />
+      <InftDetail />
+      <PoolDetail />
     </AppProvider>
   )
 }

@@ -1,5 +1,5 @@
 import { useApp } from '../context/AppContext'
-
+import logo from '../images/logo.jpg'
 export default function Landing() {
   const { page, showPage, setWalletModalOpen } = useApp()
 
@@ -9,7 +9,8 @@ export default function Landing() {
       <div className="land-grid" />
       <div className="land-content">
         <div className="land-disc">
-          <span className="land-disc-inner">👻</span>
+          {/* <span className="land-disc-inner">👻</span> */}
+          <img src={logo} alt="Logo" style={{ width: 74, height: 74, objectFit: 'contain' }} />          
         </div>
         <div className="land-pill">
           <span className="sdot on" style={{ width: 5, height: 5 }} />
