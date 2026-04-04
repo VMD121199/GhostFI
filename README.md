@@ -1,6 +1,6 @@
 # GhostFI
 
-GhostFI is a prototype for verifiable AI DeFi agents.
+GhostFI is a platform for verifiable AI DeFi agents.
 
 It combines pool discovery, AI-driven strategy selection, proof-backed metadata, and an agent marketplace into one product experience. The goal is simple: let users create, own, fork, and monitor DeFi agents that can scan yield opportunities and execute onchain logic with a transparent audit trail.
 
