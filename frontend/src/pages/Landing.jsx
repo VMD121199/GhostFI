@@ -1,7 +1,7 @@
 import { useApp } from '../context/AppContext'
 
 export default function Landing() {
-  const { page, showPage, setWalletModalOpen, connectWallet } = useApp()
+  const { page, showPage, setWalletModalOpen } = useApp()
 
   return (
     <div id="landing" className={page === 'landing' ? 'active' : ''}
@@ -26,7 +26,7 @@ export default function Landing() {
               <path stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" d="M5 12h14M13 6l6 6-6 6" />
             </svg>
           </button>
-          <button className="btn btn-lg btn-ghost" onClick={connectWallet}>
+          <button className="btn btn-lg btn-ghost" onClick={() => showPage('marketplace')}>
             Browse marketplace
           </button>
         </div>

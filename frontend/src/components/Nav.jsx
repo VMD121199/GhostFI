@@ -1,3 +1,4 @@
+import { useState } from 'react'
 import { useApp } from '../context/AppContext'
 import './Nav.css'
 
@@ -9,7 +10,8 @@ const navLinks = [
 ]
 
 export default function Nav() {
-  const { page, showPage, walletConnected, setWalletModalOpen, resetCreate } = useApp()
+  const { page, showPage, walletConnected, setWalletModalOpen, resetCreate, walletAddress, setWalletConnected } = useApp()
+  const [dropdownOpen, setDropdownOpen] = useState(false)
 
   return (
     <nav>
@@ -38,9 +40,20 @@ export default function Nav() {
       )}
 
       {walletConnected ? (
-        <div className="wallet-btn">
-          <span className="wdot" />
-          0xGhost.eth
+        <div style={{ position: 'relative' }}>
+          <button className="wallet-btn" onClick={() => setDropdownOpen(o => !o)}>
+            <span className="wdot" />
+            {walletAddress.slice(0, 6) + '...' + walletAddress.slice(-4)}
+          </button>
+          {dropdownOpen && (
+            <div className="wallet-dropdown" onClick={() => setDropdownOpen(false)}>
+              <button className="wopt" onClick={() => setWalletModalOpen(true)}>Switch Wallet</button>
+              <button className="wopt" onClick={() => {
+                setWalletConnected(false)
+                showPage('landing')
+              }}>Disconnect</button>
+            </div>
+          )}
         </div>
       ) : (
         <button className="wallet-btn" onClick={() => setWalletModalOpen(true)}>

@@ -17,7 +17,7 @@ export default function WalletModal() {
         <div className="modal-title">Connect wallet</div>
         <div className="modal-sub">Choose your wallet to access GhostFi</div>
         {wallets.map(w => (
-          <div key={w.name} className="wallet-opt" onClick={connectWallet}>
+          <div key={w.name} className="wallet-opt" onClick={() => connectWallet(w.name)}>
             <div className="w-icon">{w.icon}</div>
             <div>
               <div className="w-name">{w.name}</div>

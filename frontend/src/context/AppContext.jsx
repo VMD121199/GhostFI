@@ -5,6 +5,7 @@ const AppContext = createContext(null)
 export function AppProvider({ children }) {
   const [page, setPage] = useState('landing')
   const [walletConnected, setWalletConnected] = useState(false)
+  const [walletAddress, setWalletAddress] = useState(null)
   const [walletModalOpen, setWalletModalOpen] = useState(false)
 
   // Create agent state
@@ -23,10 +24,41 @@ export function AppProvider({ children }) {
     window.scrollTo(0, 0)
   }
 
-  const connectWallet = () => {
-    setWalletModalOpen(false)
-    setWalletConnected(true)
-    showPage('marketplace')
+  const connectWallet = async (walletName) => {
+    try {
+      let address = null
+
+      if (walletName === 'MetaMask') {
+        if (!window.ethereum?.isMetaMask) {
+          window.open('https://metamask.io/download/', '_blank')
+          return
+        }
+        const accounts = await window.ethereum.request({ method: 'eth_requestAccounts' })
+        address = accounts[0]
+
+      } else if (walletName === 'Coinbase Wallet') {
+        if (!window.ethereum) {
+          window.open('https://www.coinbase.com/wallet', '_blank')
+          return
+        }
+        const accounts = await window.ethereum.request({ method: 'eth_requestAccounts' })
+        address = accounts[0]
+
+      } else if (walletName === 'WalletConnect') {
+        // Placeholder: integrate @walletconnect/web3-provider for full support
+        alert('WalletConnect coming soon')
+        return
+      }
+
+      if (address) {
+        setWalletAddress(address)
+        setWalletConnected(true)
+        setWalletModalOpen(false)
+        showPage('marketplace')
+      }
+    } catch (err) {
+      console.error('Wallet connection failed:', err)
+    }
   }
 
   const resetCreate = () => {
@@ -58,7 +90,7 @@ export function AppProvider({ children }) {
   return (
     <AppContext.Provider value={{
       page, showPage,
-      walletConnected, walletModalOpen,
+      walletConnected, setWalletConnected, walletAddress, walletModalOpen,
       setWalletModalOpen, connectWallet,
       createStep, setCreateStep,
       agentSector, setAgentSector,
