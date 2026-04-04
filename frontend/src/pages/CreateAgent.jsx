@@ -3,40 +3,57 @@ import { useApp } from '../context/AppContext'
 
 const SECTORS = [
   { icon: '💵', name: 'Stablecoin', desc: 'Optimize yield across USDC, USDT, DAI pools. Low risk, continuous rebalancing via Uniswap v3.' },
-  { icon: '🏦', name: 'Lending', desc: 'Supply to Aave, Compound, Morpho for optimal lending rates.' },
-  { icon: '🔄', name: 'Restaking', desc: 'EigenLayer AVS restaking with AI-scored operator risk.' },
-  { icon: '🏠', name: 'RWA', desc: 'Tokenized T-bills and real-world asset yield.' },
-  { icon: '💧', name: 'Liquidity', desc: 'Concentrated liquidity ranges. Dynamic fee tier optimization.' },
-  { icon: '📈', name: 'Yield', desc: 'Multi-strategy yield aggregator.' },
+  { icon: '🏦', name: 'Lending',    desc: 'Supply to Aave, Compound, Morpho for optimal lending rates.' },
+  { icon: '🔄', name: 'Restaking',  desc: 'EigenLayer AVS restaking with AI-scored operator risk.' },
+  { icon: '🏠', name: 'RWA',        desc: 'Tokenized T-bills and real-world asset yield.' },
+  { icon: '💧', name: 'Liquidity',  desc: 'Concentrated liquidity ranges. Dynamic fee tier optimization.' },
+  { icon: '📈', name: 'Yield',      desc: 'Multi-strategy yield aggregator.' },
 ]
 
-const EMOJIS = ['🌊','🔥','⚡','🦊','🐉','🤖','💎','🦁','🌙','⚔️','🎯','🧠','🏹','🦅','👻','💀']
+const EMOJIS = ['🌊','🔥','⚡','🦊','🐉','🤖','💎','🦁','🌙','⚔️','🎯','🧠','👻','💀','🏹','🦅']
 
-const KITS = [
-  { icon: '🧠', name: '0G Compute', sub: 'Verifiable inference' },
-  { icon: '⚡', name: 'Hedera Agent Kit', sub: 'On-chain execution' },
-  { icon: '🔀', name: 'Uniswap API', sub: 'Routing + liquidity' },
-  { icon: '🌐', name: 'Web3 Data', sub: 'On-chain analytics' },
-  { icon: '🔗', name: 'Chainlink', sub: 'Price feeds + VRF' },
-  { icon: '📊', name: 'DeFiLlama', sub: 'TVL + protocol data' },
+const DURATIONS = [
+  { id: '1d',  label: '1 Day',    date: 'Apr 05, 2026' },
+  { id: '3d',  label: '3 Days',   date: 'Apr 07, 2026' },
+  { id: '7d',  label: '7 Days',   date: 'Apr 11, 2026' },
+  { id: '30d', label: '30 Days',  date: 'May 04, 2026' },
+  { id: '90d', label: '90 Days',  date: 'Jul 03, 2026' },
+  { id: 'inf', label: '∞ Ongoing', date: 'No end date' },
+]
+
+const AI_MODELS = ['GPT-4o','Claude 3.5','Llama 3.1','Mistral 7B','0G Custom ✦']
+
+const SOCIAL_FEEDS = [
+  { icon: '𝕏', name: 'X / Twitter',  sub: 'Whale alerts, CT sentiment' },
+  { icon: '✈',  name: 'Telegram',     sub: 'DeFi alpha groups' },
+  { icon: '◎',  name: 'Discord',      sub: 'Protocol communities' },
+]
+
+const POOL_SOURCES = [
+  { icon: '🦄', name: 'Uniswap v3',    sub: '247 pools · live' },
+  { icon: '〜', name: 'Curve Finance',  sub: '89 pools · live' },
+  { icon: '👻', name: 'Aave v3',        sub: '34 markets · live' },
+  { icon: '🔷', name: 'Morpho Blue',    sub: '12 vaults' },
 ]
 
 const INTERVALS = ['1m','5m','15m','1h','4h','24h']
 
 const SCAN_LINES = [
-  {t:'00:00',m:'Initialising 0G Compute node...',c:''},
-  {t:'00:01',m:'Connecting to Uniswap v3 pool API...',c:''},
-  {t:'00:03',m:'Fetching 247 stablecoin pools...',c:''},
-  {t:'00:07',m:'Running verifiable inference on 0G...',c:'hi'},
-  {t:'00:12',m:'USDC/DAI — 8.3% APY · risk 2.1/10',c:'ok'},
-  {t:'00:14',m:'USDT/USDC — 6.1% APY · risk 1.8/10',c:''},
-  {t:'00:15',m:'DAI/FRAX — 5.7% APY · risk 2.4/10',c:''},
-  {t:'00:18',m:'Competitor agent activity detected',c:'warn'},
-  {t:'00:21',m:'Proof hash posted: 0x4f2a…c831',c:'hi'},
-  {t:'00:22',m:'Scan complete. Best pool identified.',c:'ok'},
+  { t:'00:00', m:'Initialising 0G Compute node...', c:'' },
+  { t:'00:01', m:'Connecting to Uniswap v3 pool API...', c:'' },
+  { t:'00:03', m:'Fetching 247 stablecoin pools...', c:'' },
+  { t:'00:07', m:'Running verifiable inference on 0G...', c:'hi' },
+  { t:'00:12', m:'USDC/DAI — 8.3% APY · risk 2.1/10', c:'ok' },
+  { t:'00:14', m:'USDT/USDC — 6.1% APY · risk 1.8/10', c:'' },
+  { t:'00:15', m:'DAI/FRAX — 5.7% APY · risk 2.4/10', c:'' },
+  { t:'00:18', m:'Competitor agent activity detected', c:'warn' },
+  { t:'00:21', m:'Proof hash posted: 0x4f2a…c831', c:'hi' },
+  { t:'00:22', m:'Scan complete. Best pool identified.', c:'ok' },
 ]
 
 const STEP_LABELS = ['Sector','Configure','Agent kit','Scan','AI strategy','Mint iNFT']
+
+const INFT_NUM = Math.floor(Math.random() * 9000 + 1000)
 
 export default function CreateAgent() {
   const {
@@ -45,29 +62,36 @@ export default function CreateAgent() {
     agentSector, setAgentSector,
     agentEmoji, setAgentEmoji,
     agentName, setAgentName,
-    agentDesc, setAgentDesc,
+    agentMinYield, setAgentMinYield,
+    agentTargetYield, setAgentTargetYield,
+    agentMaxDD, setAgentMaxDD,
+    agentModel, setAgentModel,
+    agentSocials, toggleSocial,
+    agentPoolSources, togglePoolSource,
+    agentInterval, setAgentInterval,
+    agentDuration, setAgentDuration,
     agentCapital, setAgentCapital,
     agentRisk, setAgentRisk,
-    agentInterval, setAgentInterval,
-    agentKits, toggleKit,
-    resetCreate, forkAgent,
+    agentRoyalty, setAgentRoyalty,
+    agentListingPrice, setAgentListingPrice,
+    resetCreate,
   } = useApp()
 
   const [scanLines, setScanLines] = useState([])
   const [scanDone, setScanDone] = useState(false)
   const [scanCount, setScanCount] = useState('0')
   const [scanBest, setScanBest] = useState('—')
-  const [scanVerified, setScanVerified] = useState('—')
-  const [scanStatus, setScanStatus] = useState('Ready to scan')
+  const [scanConf, setScanConf] = useState('—')
+  const [scanVer, setScanVer] = useState('—')
+  const [scanStatus, setScanStatus] = useState('Waiting...')
   const [deployed, setDeployed] = useState(false)
-  const scanRef = useRef(null)
 
   if (page !== 'create') return null
 
   const selectedSector = SECTORS.find(s => s.name === agentSector) || SECTORS[0]
 
   const goToStep = (n) => {
-    if (n > createStep + 1 && createStep < n - 1) return
+    if (n > createStep + 1) return
     setCreateStep(n)
   }
 
@@ -76,15 +100,17 @@ export default function CreateAgent() {
     setScanDone(false)
     setScanCount('0')
     setScanBest('—')
-    setScanVerified('—')
+    setScanConf('—')
+    setScanVer('—')
     setScanStatus('Scanning...')
     SCAN_LINES.forEach((line, i) => {
       setTimeout(() => {
         setScanLines(prev => [...prev, line])
         if (i === 4) { setScanCount('247'); setScanBest('8.3%') }
         if (i === SCAN_LINES.length - 1) {
-          setScanVerified('Yes · 0G Chain')
-          setScanStatus('Done. 247 scanned.')
+          setScanConf('87%')
+          setScanVer('Yes · 0G Chain')
+          setScanStatus('Done. 247 pools scanned.')
           setScanDone(true)
         }
       }, i * 270)
@@ -96,22 +122,28 @@ export default function CreateAgent() {
   if (deployed) {
     return (
       <div className="page active" style={{ paddingTop: 60 }}>
-        <div className="page-inner">
-          <div className="done-panel">
-            <span className="done-em">{agentEmoji}</span>
-            <div className="done-title">{agentName || 'StableGhost v1'} is live!</div>
-            <div className="done-sub">
-              Your agent has been deployed and minted as an iNFT on-chain.<br />
-              It's now scanning pools and executing your strategy 24/7.
-            </div>
-            <div className="done-actions">
-              <button className="btn btn-lg btn-white" onClick={() => { setDeployed(false); showPage('myagents') }}>
-                View my agents →
-              </button>
-              <button className="btn btn-lg btn-ghost" onClick={() => { setDeployed(false); showPage('arena') }}>
-                Check arena
-              </button>
-            </div>
+        <div className="page-inner" style={{ maxWidth: 560, margin: '0 auto', textAlign: 'center', padding: '48px 28px' }}>
+          <div style={{ fontSize: 52, marginBottom: 20 }}>{agentEmoji}</div>
+          <div style={{ fontSize: 22, fontWeight: 700, letterSpacing: '-.3px', marginBottom: 8 }}>
+            Agent deployed &amp; iNFT minted
+          </div>
+          <div style={{ fontSize: 12, color: 'var(--t2)', marginBottom: 28, lineHeight: 1.8 }}>
+            <strong style={{ color: 'var(--white)' }}>{agentName || 'StableGhost v1'}</strong> is live on Hedera EVM.<br />
+            Your iNFT is listed on GhostFi marketplace.
+          </div>
+          <div className="neu-well" style={{ textAlign: 'left', marginBottom: 24 }}>
+            <div className="sum-row"><span className="sum-key">Contract</span><span className="sum-val">0x7f3a…d291</span></div>
+            <div className="sum-row"><span className="sum-key">iNFT token</span><span className="sum-val" style={{ color: 'var(--pink)' }}>#{INFT_NUM} · Hedera EVM</span></div>
+            <div className="sum-row"><span className="sum-key">0G proof</span><span className="sum-val" style={{ color: 'var(--purple)' }}>0x4f2a…c831</span></div>
+            <div className="sum-row"><span className="sum-key">First scan</span><span className="sum-val" style={{ color: 'var(--green)' }}>in ~3 min</span></div>
+          </div>
+          <div style={{ display: 'flex', gap: 9, justifyContent: 'center', flexWrap: 'wrap' }}>
+            <button className="btn btn-lg btn-white" onClick={() => { setDeployed(false); showPage('myagents') }}>
+              View my agents →
+            </button>
+            <button className="btn btn-lg btn-ghost" onClick={() => { setDeployed(false); showPage('marketplace') }}>
+              View iNFT page →
+            </button>
           </div>
         </div>
       </div>
@@ -133,9 +165,7 @@ export default function CreateAgent() {
             const state = n < createStep ? 'done' : n === createStep ? 'active' : ''
             return (
               <div key={n} className={`cstep ${state}`} onClick={() => goToStep(n)}>
-                <div className={`sc-circle`}>
-                  {n < createStep ? '✓' : n}
-                </div>
+                <div className="sc-circle">{n < createStep ? '✓' : n}</div>
                 <div className="slabel">{label}</div>
               </div>
             )
@@ -175,13 +205,14 @@ export default function CreateAgent() {
         {createStep === 2 && (
           <div className="create-layout">
             <div className="create-main">
-              <div className="section-label" style={{ marginBottom: 16 }}>Agent identity & configuration</div>
+              <div className="section-label" style={{ marginBottom: 16 }}>Agent identity &amp; yield parameters</div>
+
               <div className="field-group">
-                <div className="field-label">Agent avatar — choose an emoji</div>
+                <div className="field-label">Agent avatar</div>
                 <div style={{ display: 'flex', alignItems: 'center', gap: 16, marginBottom: 12 }}>
                   <div className="avatar-preview">{agentEmoji}</div>
                   <div style={{ fontSize: 11, color: 'var(--t2)', lineHeight: 1.7 }}>
-                    This emoji becomes your agent's identity<br />and iNFT artwork on the marketplace.
+                    Becomes your agent's identity and iNFT artwork.
                   </div>
                 </div>
                 <div className="emoji-grid">
@@ -191,22 +222,69 @@ export default function CreateAgent() {
                   ))}
                 </div>
               </div>
+
               <div className="field-group">
                 <div className="field-label">Agent name *</div>
                 <input className="neu-input" type="text" value={agentName}
                   onChange={ev => setAgentName(ev.target.value)} placeholder="e.g. MyStableAgent v1" />
               </div>
+
               <div className="field-group">
-                <div className="field-label">Strategy (natural language)</div>
-                <textarea className="neu-input" value={agentDesc}
-                  onChange={ev => setAgentDesc(ev.target.value)}
-                  placeholder={'Describe your strategy...\ne.g. Scan stablecoin pools every 15 min, rotate to highest APY if delta exceeds 0.5%...'} />
+                <div className="field-label">Yield parameters</div>
+                <div className="yield-params-grid">
+                  <div>
+                    <div className="yp-label">Min yield (floor)</div>
+                    <div className="yp-input-wrap">
+                      <input type="number" value={agentMinYield} onChange={e => setAgentMinYield(e.target.value)}
+                        min="0" max="50" step="0.5" />
+                      <span className="yp-unit">% APY</span>
+                    </div>
+                  </div>
+                  <div>
+                    <div className="yp-label">Target yield</div>
+                    <div className="yp-input-wrap">
+                      <input type="number" value={agentTargetYield} onChange={e => setAgentTargetYield(e.target.value)}
+                        min="0" max="100" step="0.5" style={{ color: 'var(--green)' }} />
+                      <span className="yp-unit">% APY</span>
+                    </div>
+                  </div>
+                  <div>
+                    <div className="yp-label">Max drawdown</div>
+                    <div className="yp-input-wrap">
+                      <input type="number" value={agentMaxDD} onChange={e => setAgentMaxDD(e.target.value)}
+                        min="0.5" max="20" step="0.5" style={{ color: 'var(--red)' }} />
+                      <span className="yp-unit">%</span>
+                    </div>
+                  </div>
+                </div>
               </div>
+
               <div className="field-group">
-                <div className="field-label">Capital to deploy *</div>
+                <div className="field-label">Agent run duration</div>
+                <div style={{ display: 'flex', gap: 7, flexWrap: 'wrap' }}>
+                  {DURATIONS.map(d => (
+                    <button key={d.id} className={`dur-chip ${agentDuration === d.id ? 'active' : ''}`}
+                      onClick={() => setAgentDuration(d.id)}>{d.label}</button>
+                  ))}
+                </div>
+                <div className="dur-info">
+                  <div className="dur-box">
+                    <div className="dur-box-lbl">Runs until</div>
+                    <div className="dur-box-val">{DURATIONS.find(d => d.id === agentDuration)?.date}</div>
+                  </div>
+                  <div className="dur-box">
+                    <div className="dur-box-lbl">Auto-renew</div>
+                    <div className="dur-box-val" style={{ color: 'var(--t3)' }}>OFF</div>
+                  </div>
+                </div>
+              </div>
+
+              <div className="field-group">
+                <div className="field-label">Capital *</div>
                 <input className="neu-input" type="text" value={agentCapital}
-                  onChange={ev => setAgentCapital(ev.target.value)} placeholder="e.g. $10,000 USDC" />
+                  onChange={e => setAgentCapital(e.target.value)} placeholder="e.g. $10,000 USDC" />
               </div>
+
               <div className="field-group">
                 <div className="field-label">Risk level</div>
                 <div className="risk-row">
@@ -218,6 +296,22 @@ export default function CreateAgent() {
                   ))}
                 </div>
               </div>
+
+              {agentCapital && (() => {
+                const cap = parseFloat(agentCapital.replace(/[^0-9.]/g, '')) || 0
+                const days = { '1d': 1, '3d': 3, '7d': 7, '30d': 30, '90d': 90, 'inf': 365 }[agentDuration] || 7
+                const proj = (cap * (parseFloat(agentTargetYield) / 100) * days / 365).toFixed(2)
+                const durLabel = DURATIONS.find(d => d.id === agentDuration)?.label || '7 Days'
+                return (
+                  <div className="proj-strip">
+                    <div className="proj-main">
+                      Projected over {durLabel} at {agentTargetYield}% APY: +${proj}
+                    </div>
+                    <div className="proj-sub">Gas estimate: ~$0.28 · Break-even after day 1</div>
+                  </div>
+                )
+              })()}
+
               <div className="create-nav">
                 <button className="btn btn-md btn-ghost" onClick={() => goToStep(1)}>← Back</button>
                 <button className="btn btn-md btn-white" onClick={() => goToStep(3)}>Next: Agent kit →</button>
@@ -232,6 +326,10 @@ export default function CreateAgent() {
                   <div style={{ fontSize: 10, color: 'var(--t3)', fontFamily: 'var(--mono)' }}>{agentSector}</div>
                 </div>
               </div>
+              <div className="sum-row"><span className="sum-key">Floor</span><span className="sum-val" style={{ color: 'var(--red)' }}>{agentMinYield}% APY</span></div>
+              <div className="sum-row"><span className="sum-key">Target</span><span className="sum-val" style={{ color: 'var(--green)' }}>{agentTargetYield}% APY</span></div>
+              <div className="sum-row"><span className="sum-key">Max DD</span><span className="sum-val" style={{ color: 'var(--red)' }}>{agentMaxDD}%</span></div>
+              <div className="sum-row"><span className="sum-key">Duration</span><span className="sum-val">{DURATIONS.find(d => d.id === agentDuration)?.label}</span></div>
               <div className="sum-row"><span className="sum-key">Capital</span><span className="sum-val">{agentCapital || '—'}</span></div>
               <div className="sum-row"><span className="sum-key">Risk</span><span className="sum-val">{agentRisk === 'low' ? 'Low' : agentRisk === 'med' ? 'Medium' : 'High'}</span></div>
             </div>
@@ -242,26 +340,62 @@ export default function CreateAgent() {
         {createStep === 3 && (
           <div className="create-layout">
             <div className="create-main">
-              <div className="section-label" style={{ marginBottom: 16 }}>Agent kit — select intelligence sources</div>
-              <div style={{ fontSize: 12, color: 'var(--t2)', marginBottom: 18, lineHeight: 1.7 }}>
-                Choose which AI agent frameworks and data sources power your agent's decision-making. These configure the inference pipeline.
-              </div>
+              <div className="section-label" style={{ marginBottom: 16 }}>Agent kit — intelligence sources</div>
+
               <div className="field-group">
-                <div className="field-label">AI inference layer</div>
-                <div className="kit-grid">
-                  {KITS.map(k => (
-                    <div key={k.name} className={`kit-opt ${agentKits.includes(k.name) ? 'active' : ''}`}
-                      onClick={() => toggleKit(k.name)}>
-                      <div className="kit-icon">{k.icon}</div>
-                      <div>
-                        <div className="kit-name">{k.name}</div>
-                        <div style={{ fontSize: 9, color: 'var(--t3)', fontFamily: 'var(--mono)', marginTop: 2 }}>{k.sub}</div>
-                      </div>
-                    </div>
+                <div className="field-label">AI inference model</div>
+                <div style={{ display: 'flex', gap: 7, flexWrap: 'wrap' }}>
+                  {AI_MODELS.map(m => (
+                    <button key={m} className={`mopt ${agentModel === m ? 'active' : ''}`}
+                      onClick={() => setAgentModel(m)}
+                      style={m.includes('0G') ? { color: agentModel === m ? 'var(--white)' : 'var(--blue)' } : {}}>
+                      {m}
+                    </button>
                   ))}
                 </div>
               </div>
-              <div className="field-group" style={{ marginTop: 20 }}>
+
+              <div className="neu-divider" />
+
+              <div className="field-group">
+                <div className="field-label">Social sentiment feeds</div>
+                <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3,1fr)', gap: 8 }}>
+                  {SOCIAL_FEEDS.map(sf => (
+                    <button key={sf.name} className={`socc ${agentSocials.includes(sf.name.split(' ')[0]) ? 'active' : ''}`}
+                      onClick={() => toggleSocial(sf.name.split(' ')[0])}>
+                      <div className="socic">{sf.icon}</div>
+                      <div className="socn">{sf.name}</div>
+                      <div className="socd">{sf.sub}</div>
+                    </button>
+                  ))}
+                </div>
+              </div>
+
+              <div className="neu-divider" />
+
+              <div className="field-group">
+                <div className="field-label">Pool API sources</div>
+                <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 7 }}>
+                  {POOL_SOURCES.map(ps => (
+                    <button key={ps.name} className={`psel ${agentPoolSources.includes(ps.name) ? 'active' : ''}`}
+                      onClick={() => togglePoolSource(ps.name)}>
+                      <div className="pic2">{ps.icon}</div>
+                      <div>
+                        <div className="pnn">{ps.name}</div>
+                        <div className="psc">{ps.sub}</div>
+                      </div>
+                      <span className={`badge ${agentPoolSources.includes(ps.name) ? 'badge-purple' : 'badge-gray'}`}
+                        style={{ marginLeft: 'auto', fontSize: 8 }}>
+                        {agentPoolSources.includes(ps.name) ? '✓' : 'Off'}
+                      </span>
+                    </button>
+                  ))}
+                </div>
+              </div>
+
+              <div className="neu-divider" />
+
+              <div className="field-group">
                 <div className="field-label">Rebalance interval</div>
                 <div className="risk-row">
                   {INTERVALS.map(i => (
@@ -270,6 +404,7 @@ export default function CreateAgent() {
                   ))}
                 </div>
               </div>
+
               <div className="create-nav">
                 <button className="btn btn-md btn-ghost" onClick={() => goToStep(2)}>← Back</button>
                 <button className="btn btn-md btn-white" onClick={() => goToStep(4)}>Next: Scan →</button>
@@ -277,10 +412,9 @@ export default function CreateAgent() {
             </div>
             <div className="create-side">
               <div className="side-title">Kit summary</div>
-              <div style={{ fontSize: 11, color: 'var(--t2)', lineHeight: 1.9 }}>
-                {agentKits.length ? agentKits.map(k => <div key={k}>✓ {k}</div>) : <div style={{ color: 'var(--t3)' }}>None selected</div>}
-              </div>
-              <div className="neu-divider" />
+              <div className="sum-row"><span className="sum-key">Model</span><span className="sum-val">{agentModel}</span></div>
+              <div className="sum-row"><span className="sum-key">Socials</span><span className="sum-val">{agentSocials.join(', ') || '—'}</span></div>
+              <div className="sum-row"><span className="sum-key">Pools</span><span className="sum-val">{agentPoolSources.length} sources</span></div>
               <div className="sum-row"><span className="sum-key">Interval</span><span className="sum-val">{agentInterval}</span></div>
             </div>
           </div>
@@ -290,20 +424,10 @@ export default function CreateAgent() {
         {createStep === 4 && (
           <div className="create-layout">
             <div className="create-main">
-              <div className="section-label" style={{ marginBottom: 16 }}>Pool scan — powered by 0G Compute</div>
-              <div className="scan-stats">
-                <div className="ss-card"><div className="ss-label">Pools scanned</div><div className="ss-val">{scanCount}</div></div>
-                <div className="ss-card"><div className="ss-label">Best APY found</div><div className="ss-val" style={{ color: 'var(--green)' }}>{scanBest}</div></div>
-                <div className="ss-card"><div className="ss-label">Proof verified</div><div className="ss-val" style={{ fontSize: 10, color: 'var(--blue)' }}>{scanVerified}</div></div>
-              </div>
-              <div className="scan-terminal" ref={scanRef}>
-                <div className="ghost-wm">
-                  <div className="ghost-wm-dot" />
-                  <div className="ghost-wm-dot" />
-                  <div className="ghost-wm-dot" />
-                  <span style={{ fontSize: 10, color: 'var(--t3)', fontFamily: 'var(--mono)', marginLeft: 6 }}>0g-ghostfi-scanner</span>
-                  <span style={{ marginLeft: 'auto', fontSize: 9, color: 'var(--t3)', fontFamily: 'var(--mono)' }}>{scanStatus}</span>
-                </div>
+              <div className="section-label" style={{ marginBottom: 16 }}>Agent scanning pools via 0G Compute</div>
+
+              <div className="scan-terminal">
+                <div className="ghost-wm">👻</div>
                 {scanLines.map((line, i) => (
                   <div key={i} className="scan-line" style={{ animationDelay: '0s' }}>
                     <span className="st">{line.t}</span>
@@ -311,75 +435,138 @@ export default function CreateAgent() {
                   </div>
                 ))}
               </div>
+
               {scanDone && (
-                <div className="pool-results">
-                  <div className="section-label">Top pools identified</div>
-                  {[
-                    { pool: 'USDC/DAI', apy: '8.3%', risk: 'risk 2.1/10' },
-                    { pool: 'USDT/USDC', apy: '6.1%', risk: 'risk 1.8/10' },
-                    { pool: 'DAI/FRAX', apy: '5.7%', risk: 'risk 2.4/10' },
-                  ].map(p => (
-                    <div key={p.pool} className="pr-row">
-                      <span className="pr-pool">{p.pool}</span>
-                      <span className="pr-apy">{p.apy} APY</span>
-                      <span className="pr-risk">{p.risk}</span>
+                <div className="pgrid">
+                  <div className="pcrd best" onClick={() => showPage('pool-detail')}>
+                    <div className="pn" style={{ display: 'flex', alignItems: 'center', gap: 5 }}>
+                      <img src="https://s2.coinmarketcap.com/static/img/coins/64x64/3408.png" width="14" height="14" style={{ borderRadius: '50%' }} alt="" />
+                      <img src="https://s2.coinmarketcap.com/static/img/coins/64x64/4943.png" width="14" height="14" style={{ borderRadius: '50%' }} alt="" />
+                      <span>USDC/DAI · Uniswap v3</span>
                     </div>
-                  ))}
+                    <div className="pa" style={{ color: 'var(--green)' }}>8.3%</div>
+                    <div className="pm">TVL $42M · conf. 87% · <span style={{ color: 'var(--green)' }}>best</span></div>
+                    <div style={{ fontSize: 9, color: 'var(--blue)', fontFamily: 'var(--mono)', marginTop: 4 }}>Click → risk analysis</div>
+                  </div>
+                  <div className="pcrd" onClick={() => showPage('pool-detail')}>
+                    <div className="pn" style={{ display: 'flex', alignItems: 'center', gap: 5 }}>
+                      <img src="https://s2.coinmarketcap.com/static/img/coins/64x64/825.png" width="14" height="14" style={{ borderRadius: '50%' }} alt="" />
+                      <img src="https://s2.coinmarketcap.com/static/img/coins/64x64/3408.png" width="14" height="14" style={{ borderRadius: '50%' }} alt="" />
+                      <span>USDT/USDC · Curve</span>
+                    </div>
+                    <div className="pa" style={{ color: 'var(--t2)' }}>6.1%</div>
+                    <div className="pm">TVL $280M · conf. 74%</div>
+                  </div>
+                  <div className="pcrd" onClick={() => showPage('pool-detail')}>
+                    <div className="pn" style={{ display: 'flex', alignItems: 'center', gap: 5 }}>
+                      <img src="https://s2.coinmarketcap.com/static/img/coins/64x64/4943.png" width="14" height="14" style={{ borderRadius: '50%' }} alt="" />
+                      <span>DAI/FRAX · Uniswap v3</span>
+                    </div>
+                    <div className="pa" style={{ color: 'var(--t2)' }}>5.7%</div>
+                    <div className="pm">TVL $18M · conf. 61%</div>
+                  </div>
                 </div>
               )}
+
               <div className="create-nav">
                 <button className="btn btn-md btn-ghost" onClick={() => goToStep(3)}>← Back</button>
                 <button className="btn btn-md btn-green" onClick={startScan}>▶ Run scan</button>
                 <button className="btn btn-md btn-white"
-                  style={{ opacity: scanDone ? 1 : 0.35, pointerEvents: scanDone ? 'auto' : 'none' }}
-                  onClick={() => goToStep(5)}>
-                  Next: AI strategy →
-                </button>
+                  style={{ opacity: scanDone ? 1 : .35, pointerEvents: scanDone ? 'auto' : 'none' }}
+                  onClick={() => goToStep(5)}>Next: AI strategy →</button>
               </div>
             </div>
             <div className="create-side">
-              <div className="side-title">Scan config</div>
-              <div className="sum-row"><span className="sum-key">Sector</span><span className="sum-val">{agentSector}</span></div>
-              <div className="sum-row"><span className="sum-key">Interval</span><span className="sum-val">{agentInterval}</span></div>
-              <div className="sum-row"><span className="sum-key">Kit</span><span className="sum-val">{agentKits[0] || '—'}</span></div>
+              <div className="side-title">Scan status</div>
+              <div className="sum-row"><span className="sum-key">Pools found</span><span className="sum-val">{scanCount}</span></div>
+              <div className="sum-row"><span className="sum-key">Best APY</span><span className="sum-val" style={{ color: 'var(--green)' }}>{scanBest}</span></div>
+              <div className="sum-row"><span className="sum-key">Confidence</span><span className="sum-val" style={{ color: 'var(--blue)' }}>{scanConf}</span></div>
+              <div className="sum-row"><span className="sum-key">0G verified</span><span className="sum-val">{scanVer}</span></div>
+              <div className="neu-divider" />
+              <div style={{ fontSize: 10, color: 'var(--t3)', fontFamily: 'var(--mono)', lineHeight: 2 }}>{scanStatus}</div>
             </div>
           </div>
         )}
 
-        {/* STEP 5: AI STRATEGY */}
+        {/* STEP 5: AI STRATEGY / TRIGGERS */}
         {createStep === 5 && (
           <div className="create-layout">
             <div className="create-main">
-              <div className="section-label" style={{ marginBottom: 16 }}>AI strategy — generated by 0G inference</div>
-              <div className="ai-panel">
-                <div className="ai-header">
-                  <span className="ai-label">▶ 0G · verifiable inference</span>
-                  <span className="badge badge-blue">Proof: 0x4f2a…c831</span>
+              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 14 }}>
+                <div>
+                  <div style={{ fontSize: 13, fontWeight: 700, color: 'var(--white)' }}>AI-recommended trigger conditions</div>
+                  <div style={{ fontSize: 11, color: 'var(--t3)', fontFamily: 'var(--mono)', marginTop: 2 }}>Edit any value — agent re-simulates on change</div>
                 </div>
-                <div className="ai-stream">
-                  <strong>Strategy: {agentSector} Optimiser</strong><br /><br />
-                  Based on scan results, I recommend allocating capital to{' '}
-                  <em>USDC/DAI (8.3% APY)</em> as the primary pool with a 70% weighting.<br /><br />
-                  <strong>Trigger conditions:</strong><br />
-                  — Rebalance when APY delta exceeds <em>0.5%</em><br />
-                  — Swap out if pool risk score exceeds <em>4.0/10</em><br />
-                  — Check competitor agent activity every <em>{agentInterval}</em><br /><br />
-                  <strong>Risk assessment:</strong> This strategy is rated{' '}
-                  <em>{agentRisk === 'low' ? 'LOW' : agentRisk === 'med' ? 'MEDIUM' : 'HIGH'}</em> risk
-                  based on pool stability and liquidity depth over 30 days.<br /><br />
-                  All inference verified on-chain via 0G Compute proof system.
+                <span className="badge badge-purple">Proof: 0x4f2a…c831</span>
+              </div>
+
+              <div className="section-label" style={{ marginBottom: 10 }}>Rotation triggers</div>
+              <div className="trow">
+                <div className="tif">IF</div>
+                <select className="tsel"><option>APY delta</option><option>TVL change</option></select>
+                <span style={{ fontSize: 11, color: 'var(--t3)', fontFamily: 'var(--mono)' }}>&gt;</span>
+                <input className="tval" type="text" defaultValue="0.5%" />
+                <span style={{ fontSize: 11, color: 'var(--t3)', fontFamily: 'var(--mono)' }}>AND confidence</span>
+                <input className="tval" type="text" defaultValue="≥ 85%" />
+                <span style={{ fontSize: 11, color: 'var(--t3)', fontFamily: 'var(--mono)' }}>THEN</span>
+                <div className="tact trot">Rotate capital</div>
+              </div>
+              <div className="trow">
+                <div className="tif">IF</div>
+                <select className="tsel"><option>Social sentiment</option><option>TVL change</option></select>
+                <span style={{ fontSize: 11, color: 'var(--t3)', fontFamily: 'var(--mono)' }}>drops to</span>
+                <input className="tval" type="text" defaultValue="Bearish" />
+                <span style={{ fontSize: 11, color: 'var(--t3)', fontFamily: 'var(--mono)' }}>THEN</span>
+                <div className="tact talert-act">Alert me</div>
+              </div>
+
+              <div className="section-label" style={{ marginTop: 18, marginBottom: 10 }}>Exit triggers</div>
+              <div className="trow">
+                <div className="tif">IF</div>
+                <select className="tsel"><option>Pool APY</option></select>
+                <span style={{ fontSize: 11, color: 'var(--t3)', fontFamily: 'var(--mono)' }}>drops below</span>
+                <input className="tval danger" type="text" defaultValue={`${agentMinYield}%`} />
+                <span style={{ fontSize: 11, color: 'var(--t3)', fontFamily: 'var(--mono)' }}>THEN</span>
+                <div className="tact texit">Exit to USDC</div>
+              </div>
+              <div className="trow">
+                <div className="tif">IF</div>
+                <select className="tsel"><option>Drawdown</option></select>
+                <span style={{ fontSize: 11, color: 'var(--t3)', fontFamily: 'var(--mono)' }}>exceeds</span>
+                <input className="tval danger" type="text" defaultValue={`${agentMaxDD}%`} />
+                <span style={{ fontSize: 11, color: 'var(--t3)', fontFamily: 'var(--mono)' }}>THEN</span>
+                <div className="tact texit">Pause + alert</div>
+              </div>
+              <div className="trow">
+                <div className="tif">IF</div>
+                <select className="tsel"><option>Smart contract risk</option></select>
+                <span style={{ fontSize: 11, color: 'var(--t3)', fontFamily: 'var(--mono)' }}>exceeds</span>
+                <input className="tval warn" type="text" defaultValue="6 / 10" />
+                <span style={{ fontSize: 11, color: 'var(--t3)', fontFamily: 'var(--mono)' }}>THEN</span>
+                <div className="tact texit">Emergency exit</div>
+              </div>
+              <button className="tadd">+ Add custom trigger condition</button>
+
+              <div style={{ marginTop: 14, padding: 11, background: 'var(--surface-down)', borderRadius: 'var(--r-sm)', boxShadow: 'var(--neu-in-sm)' }}>
+                <div style={{ fontSize: 10, color: 'var(--green)', fontFamily: 'var(--mono)', fontWeight: 700, marginBottom: 3 }}>
+                  Backtested · 370 pools · 7 days
+                </div>
+                <div style={{ fontSize: 10, color: 'var(--t3)', fontFamily: 'var(--mono)' }}>
+                  Win rate 91% · Expected yield 8.3% · Max simulated drawdown 0.3%
                 </div>
               </div>
+
               <div className="create-nav">
                 <button className="btn btn-md btn-ghost" onClick={() => goToStep(4)}>← Back</button>
                 <button className="btn btn-md btn-white" onClick={() => goToStep(6)}>Next: Mint iNFT →</button>
               </div>
             </div>
             <div className="create-side">
-              <div className="side-title">Strategy summary</div>
+              <div className="side-title">Projection</div>
               <div className="sum-row"><span className="sum-key">Primary pool</span><span className="sum-val">USDC/DAI</span></div>
-              <div className="sum-row"><span className="sum-key">Target APY</span><span className="sum-val" style={{ color: 'var(--green)' }}>8.3%</span></div>
-              <div className="sum-row"><span className="sum-key">Risk score</span><span className="sum-val">2.1 / 10</span></div>
+              <div className="sum-row"><span className="sum-key">Expected APY</span><span className="sum-val" style={{ color: 'var(--green)' }}>8.3%</span></div>
+              <div className="sum-row"><span className="sum-key">Win rate</span><span className="sum-val">91%</span></div>
+              <div className="sum-row"><span className="sum-key">Max drawdown</span><span className="sum-val" style={{ color: 'var(--green)' }}>0.3%</span></div>
             </div>
           </div>
         )}
@@ -388,42 +575,71 @@ export default function CreateAgent() {
         {createStep === 6 && (
           <div className="create-layout">
             <div className="create-main">
-              <div className="section-label" style={{ marginBottom: 16 }}>Mint your agent as a tradeable iNFT</div>
-              <div className="inft-panel">
-                <div className="inft-card">
-                  <div className="inft-avatar">{agentEmoji}</div>
-                  <div>
-                    <div className="inft-name">{agentName || 'StableGhost v1'}</div>
-                    <div className="inft-id">ghostfi.eth / #{Math.floor(Math.random() * 9000 + 1000)}</div>
-                    <div className="inft-traits">
-                      <span className="badge">{agentSector}</span>
-                      <span className="badge badge-blue">{agentKits[0] || '0G'}</span>
-                      <span className="badge badge-green">{agentRisk === 'low' ? 'Low risk' : agentRisk === 'med' ? 'Med risk' : 'High risk'}</span>
-                      <span className="badge badge-purple">{agentInterval}</span>
-                    </div>
+              <div className="section-label" style={{ marginBottom: 16 }}>Mint your agent as an iNFT</div>
+              <div style={{ fontSize: 12, color: 'var(--t2)', marginBottom: 18, lineHeight: 1.7 }}>
+                Your agent becomes a tradeable intelligent NFT. Others can copy your strategy — you earn royalties every time.
+              </div>
+
+              {/* iNFT preview card */}
+              <div style={{ background: 'var(--surface-down)', borderRadius: 'var(--r-lg)', boxShadow: 'var(--neu-in)', padding: 20, display: 'flex', gap: 18, alignItems: 'center', marginBottom: 18 }}>
+                <div className="inft-avatar">{agentEmoji}</div>
+                <div>
+                  <div style={{ fontSize: 16, fontWeight: 700, marginBottom: 4 }}>{agentName || 'StableGhost v1'}</div>
+                  <div style={{ fontSize: 10, fontFamily: 'var(--mono)', color: 'var(--t3)' }}>GhostFi iNFT · #{INFT_NUM} · Hedera EVM</div>
+                  <div className="inft-traits" style={{ marginTop: 8 }}>
+                    <span className="badge badge-green">{agentSector}</span>
+                    <span className="badge badge-purple">0G Verified</span>
+                    <span className="badge badge-pink">iNFT</span>
                   </div>
                 </div>
-                <div style={{ fontSize: 11, color: 'var(--t2)', lineHeight: 1.8, marginBottom: 18 }}>
-                  Your agent will be minted as an intelligent NFT (iNFT) — a tradeable on-chain asset that embeds your strategy and performance history. Others can fork it, and you earn creator fees.
-                </div>
-                <div className="sum-row"><span className="sum-key">Mint fee</span><span className="sum-val">0.002 ETH</span></div>
-                <div className="sum-row"><span className="sum-key">Creator royalty</span><span className="sum-val">2.5%</span></div>
-                <div className="sum-row"><span className="sum-key">Capital to lock</span><span className="sum-val">{agentCapital || '$0'}</span></div>
               </div>
+
+              {/* Royalty + listing inputs */}
+              <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 10, marginBottom: 16 }}>
+                <div className="field-group" style={{ margin: 0 }}>
+                  <div className="field-label">Royalty on copies</div>
+                  <input className="neu-input" type="text" value={agentRoyalty}
+                    onChange={e => setAgentRoyalty(e.target.value)} />
+                </div>
+                <div className="field-group" style={{ margin: 0 }}>
+                  <div className="field-label">Listing price</div>
+                  <input className="neu-input" type="text" value={agentListingPrice}
+                    onChange={e => setAgentListingPrice(e.target.value)} />
+                </div>
+              </div>
+
+              {/* Hedera EVM info */}
+              <div className="neu-well" style={{ marginBottom: 18 }}>
+                <div style={{ fontSize: 9, fontFamily: 'var(--mono)', color: 'var(--t3)', letterSpacing: '.08em', textTransform: 'uppercase', marginBottom: 7 }}>
+                  Minting on ⬡ Hedera EVM
+                </div>
+                <div style={{ fontSize: 11, color: 'var(--t2)', lineHeight: 1.9, fontFamily: 'var(--mono)' }}>
+                  Standard: ERC-721 + iNFT extension<br />
+                  Metadata: 🔷 0G Storage (immutable)<br />
+                  Proof: 0G Chain hash linked<br />
+                  Gas: ~$0.002 on Hedera testnet
+                </div>
+              </div>
+
               <div className="create-nav">
                 <button className="btn btn-md btn-ghost" onClick={() => goToStep(5)}>← Back</button>
-                <button className="btn btn-lg btn-white" onClick={deploy}>
-                  🚀 Deploy & mint iNFT
-                </button>
+                <button className="btn btn-md btn-pink" onClick={deploy}>Mint iNFT &amp; Deploy ✦</button>
               </div>
             </div>
             <div className="create-side">
-              <div className="side-title">Final summary</div>
-              <div className="sum-row"><span className="sum-key">Name</span><span className="sum-val">{agentName || '—'}</span></div>
-              <div className="sum-row"><span className="sum-key">Sector</span><span className="sum-val">{agentSector}</span></div>
-              <div className="sum-row"><span className="sum-key">Capital</span><span className="sum-val">{agentCapital || '—'}</span></div>
-              <div className="sum-row"><span className="sum-key">Risk</span><span className="sum-val">{agentRisk === 'low' ? 'Low' : agentRisk === 'med' ? 'Medium' : 'High'}</span></div>
-              <div className="sum-row"><span className="sum-key">Interval</span><span className="sum-val">{agentInterval}</span></div>
+              <div className="side-title">iNFT preview</div>
+              <div style={{ background: 'var(--surface-down)', borderRadius: 'var(--r-lg)', boxShadow: 'var(--neu-in)', padding: 18, textAlign: 'center', marginBottom: 14 }}>
+                <div style={{ fontSize: 48, marginBottom: 10 }}>{agentEmoji}</div>
+                <div style={{ fontSize: 13, fontWeight: 700, marginBottom: 3 }}>{agentName || 'StableGhost v1'}</div>
+                <div style={{ fontSize: 9, color: 'var(--t3)', fontFamily: 'var(--mono)' }}>GhostFi iNFT · #{INFT_NUM}</div>
+                <div style={{ marginTop: 10, display: 'flex', gap: 5, justifyContent: 'center', flexWrap: 'wrap' }}>
+                  <span className="badge badge-pink">iNFT</span>
+                  <span className="badge badge-purple">0G</span>
+                  <span className="badge badge-green">Live</span>
+                </div>
+              </div>
+              <div className="sum-row"><span className="sum-key">Royalty</span><span className="sum-val">{agentRoyalty}</span></div>
+              <div className="sum-row"><span className="sum-key">Copies earn</span><span className="sum-val" style={{ color: 'var(--green)' }}>Passive</span></div>
             </div>
           </div>
         )}
