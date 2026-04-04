@@ -7,8 +7,8 @@ const COLOR_VAR = { green: 'var(--green)', amber: 'var(--amber)', red: 'var(--re
 
 export default function PoolDetail() {
   const { page, goBack, showPage, poolDetail } = useApp()
-  const [riskFactors, setRiskFactors]     = useState([])
-  const [composite, setComposite]         = useState(null)
+  const [riskFactors, setRiskFactors] = useState([])
+  const [composite, setComposite] = useState(null)
   const [compositeLabel, setCompositeLabel] = useState('')
 
   useEffect(() => {
@@ -17,8 +17,8 @@ export default function PoolDetail() {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({
-        name:      poolDetail.name,
-        protocol:  poolDetail.protocol,
+        name: poolDetail.name,
+        protocol: poolDetail.protocol,
         riskScore: poolDetail.riskScore,
         breakdown: poolDetail.breakdown,
       }),
@@ -31,20 +31,20 @@ export default function PoolDetail() {
           setCompositeLabel(data.compositeLabel)
         }
       })
-      .catch(() => {}) // fail silently — fallback static display
+      .catch(() => { }) // fail silently — fallback static display
   }, [page, poolDetail])
 
   if (page !== 'pool-detail') return null
 
   // Real data from scan, or fallback defaults
   const p = poolDetail || {}
-  const name      = p.name     || 'USDC / DAI'
-  const protocol  = p.protocol || 'Uniswap v3'
-  const apy       = p.apy      || '8.3%'
-  const tvl       = p.tvl      || '$42.1M'
-  const conf      = p.confidence ?? 87
+  const name = p.name || 'USDC / DAI'
+  const protocol = p.protocol || 'Uniswap v3'
+  const apy = p.apy || '8.3%'
+  const tvl = p.tvl || '$42.1M'
+  const conf = p.confidence ?? 87
   const riskScore = p.riskScore ?? 2.1
-  const action    = p.action   || 'invest'
+  const action = p.action || 'invest'
   const reasoning = p.reasoning || 'Stablecoin pair with near-zero IL risk. Chainlink oracle latency <1s. Sentiment neutral.'
   const riskColor = riskScore <= 3 ? 'var(--green)' : riskScore <= 6 ? 'var(--amber)' : 'var(--red)'
   const riskLabel = riskScore <= 3 ? 'LOW' : riskScore <= 6 ? 'MEDIUM' : 'HIGH'
@@ -94,10 +94,10 @@ export default function PoolDetail() {
 
           <div className="pmgrid">
             {[
-              { label: 'Current APY',       val: apy,                       sub: 'AI estimated',  c: 'var(--green)' },
-              { label: 'Total value locked', val: tvl,                       sub: 'Live data',     c: 'var(--white)' },
-              { label: 'Risk score',         val: `${riskScore} / 10`,       sub: riskLabel,       c: riskColor },
-              { label: 'IL estimate',        val: riskScore <= 3 ? '~0.01%' : '~0.5%', sub: 'Minimal', c: 'var(--green)' },
+              { label: 'Current APY', val: apy, sub: 'AI estimated', c: 'var(--green)' },
+              { label: 'Total value locked', val: tvl, sub: 'Live data', c: 'var(--white)' },
+              { label: 'Risk score', val: `${riskScore} / 10`, sub: riskLabel, c: riskColor },
+              { label: 'IL estimate', val: riskScore <= 3 ? '~0.01%' : '~0.5%', sub: 'Minimal', c: 'var(--green)' },
             ].map(m => (
               <div key={m.label} className="pmcard">
                 <div className="pml">{m.label}</div>
@@ -152,10 +152,10 @@ export default function PoolDetail() {
             <div className="neu-card" style={{ padding: 18 }}>
               <div className="section-label">Pool metrics</div>
               {[
-                { k: 'Protocol',      v: protocol,                               c: '' },
-                { k: 'TVL',           v: tvl,                                    c: 'var(--white)' },
-                { k: 'Confidence',    v: `${conf}%`,                             c: 'var(--green)' },
-                { k: 'Action',        v: action,                                 c: action === 'invest' ? 'var(--green)' : 'var(--amber)' },
+                { k: 'Protocol', v: protocol, c: '' },
+                { k: 'TVL', v: tvl, c: 'var(--white)' },
+                { k: 'Confidence', v: `${conf}%`, c: 'var(--green)' },
+                { k: 'Action', v: action, c: action === 'invest' ? 'var(--green)' : 'var(--amber)' },
               ].map(r => (
                 <div key={r.k} className="sum-row">
                   <span className="sum-key">{r.k}</span>
