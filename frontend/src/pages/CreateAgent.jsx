@@ -57,7 +57,7 @@ const INFT_NUM = Math.floor(Math.random() * 9000 + 1000)
 
 export default function CreateAgent() {
   const {
-    page, showPage,
+    page, showPage, openPool,
     createStep, setCreateStep,
     agentSector, setAgentSector,
     agentEmoji, setAgentEmoji,
@@ -475,7 +475,7 @@ export default function CreateAgent() {
             {scanDone && scanPools.length > 0 && (
               <div className="pgrid">
                 {scanPools.map((pool, i) => (
-                  <div key={i} className={`pcrd ${pool.best ? 'best' : ''}`} onClick={() => showPage('pool-detail')}>
+                  <div key={i} className={`pcrd ${pool.best ? 'best' : ''}`} onClick={() => openPool(pool)}>
                     <div className="pn">{pool.name} · {pool.protocol}</div>
                     <div className="pa" style={{ color: pool.best ? 'var(--green)' : 'var(--t2)' }}>
                       {pool.apy ?? '—'}

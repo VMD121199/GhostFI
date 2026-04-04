@@ -8,6 +8,7 @@ export function AppProvider({ children }) {
   const [walletAddress, setWalletAddress] = useState(null)
   const [walletModalOpen, setWalletModalOpen] = useState(false)
   const [inftAgent, setInftAgent] = useState(null)
+  const [poolDetail, setPoolDetail] = useState(null)
   const [prevPage, setPrevPage] = useState('marketplace')
 
   // Create agent state
@@ -38,6 +39,13 @@ export function AppProvider({ children }) {
     setPrevPage(page)
     setInftAgent(agent)
     setPage('inft-detail')
+    window.scrollTo(0, 0)
+  }
+
+  const openPool = (pool) => {
+    setPrevPage(page)
+    setPoolDetail(pool)
+    setPage('pool-detail')
     window.scrollTo(0, 0)
   }
 
@@ -120,6 +128,7 @@ export function AppProvider({ children }) {
       walletConnected, setWalletConnected, walletAddress, walletModalOpen,
       setWalletModalOpen, connectWallet,
       inftAgent, openInft,
+      poolDetail, openPool,
       createStep, setCreateStep,
       agentSector, setAgentSector,
       agentEmoji, setAgentEmoji,
