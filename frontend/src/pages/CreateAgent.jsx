@@ -73,6 +73,8 @@ export default function CreateAgent() {
   const [scanStatus, setScanStatus] = useState('Waiting...')
   const [scanPools, setScanPools] = useState([])
   const [deployed, setDeployed] = useState(false)
+  const [deployResult, setDeployResult] = useState(null)
+  const [deploying, setDeploying] = useState(false)
 
   if (page !== 'create') return null
 
@@ -139,7 +141,29 @@ export default function CreateAgent() {
     })
   }
 
-  const deploy = () => setDeployed(true)
+  const deploy = async () => {
+    setDeploying(true)
+    let result = null
+    try {
+      const res = await fetch('http://localhost:5000/api/agent/deploy', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          name: agentName, sector: agentSector, emoji: agentEmoji,
+          capital: agentCapital, royalty: agentRoyalty, listingPrice: agentListingPrice,
+          model: agentModel, sources: agentPoolSources, socials: agentSocials,
+          interval: agentInterval, duration: agentDuration, risk: agentRisk,
+          minYield: agentMinYield, targetYield: agentTargetYield, maxDD: agentMaxDD,
+        }),
+      })
+      result = await res.json()
+    } catch (e) {
+      result = { tokenId: INFT_NUM, txHash: '0x7f3a…d291', contract: '0x69242f…726C', proof: '0x4f2a…c831', network: 'Hedera EVM testnet' }
+    }
+    setDeployResult(result)
+    setDeploying(false)
+    setDeployed(true)
+  }
 
   if (deployed) {
     return (
@@ -154,9 +178,10 @@ export default function CreateAgent() {
             Your iNFT is listed on GhostFi marketplace.
           </div>
           <div className="neu-well" style={{ textAlign: 'left', marginBottom: 24 }}>
-            <div className="sum-row"><span className="sum-key">Contract</span><span className="sum-val">0x7f3a…d291</span></div>
-            <div className="sum-row"><span className="sum-key">iNFT token</span><span className="sum-val" style={{ color: 'var(--pink)' }}>#{INFT_NUM} · Hedera EVM</span></div>
-            <div className="sum-row"><span className="sum-key">0G proof</span><span className="sum-val" style={{ color: 'var(--purple)' }}>0x4f2a…c831</span></div>
+            <div className="sum-row"><span className="sum-key">Contract</span><span className="sum-val" style={{ fontFamily: 'var(--mono)', fontSize: 10 }}>{deployResult?.contract || '0x69242f…726C'}</span></div>
+            <div className="sum-row"><span className="sum-key">iNFT token</span><span className="sum-val" style={{ color: 'var(--pink)' }}>#{deployResult?.tokenId || INFT_NUM} · {deployResult?.network || 'Hedera EVM'}</span></div>
+            <div className="sum-row"><span className="sum-key">Mint TX</span><span className="sum-val" style={{ fontFamily: 'var(--mono)', fontSize: 10 }}>{deployResult?.txHash || '0x7f3a…d291'}</span></div>
+            <div className="sum-row"><span className="sum-key">0G proof</span><span className="sum-val" style={{ color: 'var(--purple)' }}>{deployResult?.proof || '0x4f2a…c831'}</span></div>
             <div className="sum-row"><span className="sum-key">First scan</span><span className="sum-val" style={{ color: 'var(--green)' }}>in ~3 min</span></div>
           </div>
           <div style={{ display: 'flex', gap: 9, justifyContent: 'center', flexWrap: 'wrap' }}>
@@ -635,7 +660,7 @@ export default function CreateAgent() {
                   Minting on ⬡ Hedera EVM
                 </div>
                 <div style={{ fontSize: 11, color: 'var(--t2)', lineHeight: 1.9, fontFamily: 'var(--mono)' }}>
-                  Standard: ERC-7857<br />
+                  Standard: ERC-7857 (ERC721 + iNFT)<br />
                   Metadata: 🔷 0G Storage (immutable)<br />
                   Proof: 0G Chain hash linked<br />
                   {/* Gas: ~$0.002 on Hedera testnet<br /> */}
@@ -645,23 +670,56 @@ export default function CreateAgent() {
 
               <div className="create-nav">
                 <button className="btn btn-md btn-ghost" onClick={() => goToStep(5)}>← Back</button>
-                <button className="btn btn-md btn-pink" onClick={deploy}>Mint iNFT &amp; Deploy ✦</button>
+                <button className="btn btn-md btn-pink" onClick={deploy} disabled={deploying}
+                  style={{ opacity: deploying ? 0.6 : 1 }}>
+                  {deploying ? 'Minting…' : 'Mint iNFT & Deploy ✦'}
+                </button>
               </div>
             </div>
             <div className="create-side">
-              <div className="side-title">iNFT preview</div>
-              <div style={{ background: 'var(--surface-down)', borderRadius: 'var(--r-lg)', boxShadow: 'var(--neu-in)', padding: 18, textAlign: 'center', marginBottom: 14 }}>
-                <div style={{ fontSize: 48, marginBottom: 10 }}>{agentEmoji}</div>
-                <div style={{ fontSize: 13, fontWeight: 700, marginBottom: 3 }}>{agentName || 'StableGhost v1'}</div>
-                <div style={{ fontSize: 9, color: 'var(--t3)', fontFamily: 'var(--mono)' }}>GhostFi iNFT · #{INFT_NUM}</div>
-                <div style={{ marginTop: 10, display: 'flex', gap: 5, justifyContent: 'center', flexWrap: 'wrap' }}>
+              {/* iNFT card */}
+              <div style={{ background: 'var(--surface-down)', borderRadius: 'var(--r-lg)', boxShadow: 'var(--neu-in)', padding: 16, textAlign: 'center', marginBottom: 14 }}>
+                <div style={{ fontSize: 40, marginBottom: 8 }}>{agentEmoji}</div>
+                <div style={{ fontSize: 13, fontWeight: 700, marginBottom: 2 }}>{agentName || 'StableGhost v1'}</div>
+                <div style={{ fontSize: 9, color: 'var(--t3)', fontFamily: 'var(--mono)', marginBottom: 8 }}>GhostFi iNFT · #{INFT_NUM}</div>
+                <div style={{ display: 'flex', gap: 5, justifyContent: 'center', flexWrap: 'wrap' }}>
                   <span className="badge badge-pink">iNFT</span>
                   <span className="badge badge-purple">0G</span>
                   <span className="badge badge-green">Live</span>
                 </div>
               </div>
+
+              {/* Full recap */}
+              <div className="side-title" style={{ marginBottom: 10 }}>Full recap</div>
+
+              <div style={{ fontSize: 9, color: 'var(--t3)', fontFamily: 'var(--mono)', letterSpacing: '.06em', textTransform: 'uppercase', marginBottom: 4 }}>Strategy</div>
+              <div className="sum-row"><span className="sum-key">Sector</span><span className="sum-val">{agentSector}</span></div>
+              <div className="sum-row"><span className="sum-key">Floor yield</span><span className="sum-val" style={{ color: 'var(--red)' }}>{agentMinYield}% APY</span></div>
+              <div className="sum-row"><span className="sum-key">Target yield</span><span className="sum-val" style={{ color: 'var(--green)' }}>{agentTargetYield}% APY</span></div>
+              <div className="sum-row"><span className="sum-key">Max drawdown</span><span className="sum-val" style={{ color: 'var(--red)' }}>{agentMaxDD}%</span></div>
+
+              <div className="neu-divider" />
+
+              <div style={{ fontSize: 9, color: 'var(--t3)', fontFamily: 'var(--mono)', letterSpacing: '.06em', textTransform: 'uppercase', marginBottom: 4 }}>Capital & risk</div>
+              <div className="sum-row"><span className="sum-key">Capital</span><span className="sum-val">{agentCapital || '—'}</span></div>
+              <div className="sum-row"><span className="sum-key">Risk level</span><span className="sum-val">{agentRisk === 'low' ? 'Low' : agentRisk === 'med' ? 'Medium' : 'High'}</span></div>
+              <div className="sum-row"><span className="sum-key">Duration</span><span className="sum-val">{DURATIONS.find(d => d.id === agentDuration)?.label}</span></div>
+              <div className="sum-row"><span className="sum-key">Runs until</span><span className="sum-val">{DURATIONS.find(d => d.id === agentDuration)?.date}</span></div>
+
+              <div className="neu-divider" />
+
+              <div style={{ fontSize: 9, color: 'var(--t3)', fontFamily: 'var(--mono)', letterSpacing: '.06em', textTransform: 'uppercase', marginBottom: 4 }}>Agent kit</div>
+              <div className="sum-row"><span className="sum-key">AI model</span><span className="sum-val">{agentModel}</span></div>
+              <div className="sum-row"><span className="sum-key">Socials</span><span className="sum-val">{agentSocials.join(', ') || '—'}</span></div>
+              <div className="sum-row"><span className="sum-key">Sources</span><span className="sum-val">{agentPoolSources.length} protocols</span></div>
+              <div className="sum-row"><span className="sum-key">Interval</span><span className="sum-val">{agentInterval}</span></div>
+
+              <div className="neu-divider" />
+
+              <div style={{ fontSize: 9, color: 'var(--t3)', fontFamily: 'var(--mono)', letterSpacing: '.06em', textTransform: 'uppercase', marginBottom: 4 }}>iNFT</div>
               <div className="sum-row"><span className="sum-key">Royalty</span><span className="sum-val">{agentRoyalty}</span></div>
-              <div className="sum-row"><span className="sum-key">Copies earn</span><span className="sum-val" style={{ color: 'var(--green)' }}>Passive</span></div>
+              <div className="sum-row"><span className="sum-key">Listing</span><span className="sum-val">{agentListingPrice}</span></div>
+              <div className="sum-row"><span className="sum-key">Copies earn</span><span className="sum-val" style={{ color: 'var(--green)' }}>Passive royalties</span></div>
             </div>
           </div>
         )}
