@@ -10,6 +10,7 @@ export function AppProvider({ children }) {
   const [inftAgent, setInftAgent] = useState(null)
   const [poolDetail, setPoolDetail] = useState(null)
   const [prevPage, setPrevPage] = useState('marketplace')
+  const [prevCreateStep, setPrevCreateStep] = useState(1)
 
   // Create agent state
   const [createStep, setCreateStep] = useState(1)
@@ -50,6 +51,7 @@ export function AppProvider({ children }) {
   }
 
   const openPool = (pool) => {
+    setPrevCreateStep(createStep)
     setPrevPage(page)
     setPoolDetail(pool)
     setPage('pool-detail')
@@ -121,6 +123,29 @@ export function AppProvider({ children }) {
     showPage('create')
   }
 
+  const createFromPool = (pool) => {
+    if (!pool) { showPage('create'); return }
+    resetCreate()
+    // Map protocol → sector
+    const protocolSectorMap = {
+      'Uniswap v3':    'Liquidity',
+      'Curve Finance': 'Stablecoin',
+      'Aave v3':       'Lending',
+      'Morpho Blue':   'Lending',
+    }
+    const sector = protocolSectorMap[pool.protocol] || 'Stablecoin'
+    setAgentSector(sector)
+    // Pre-select only this pool's source
+    setAgentPoolSources(pool.protocol ? [pool.protocol] : ['Uniswap v3'])
+    // Pre-fill yield target from AI expected return (strip "+" and "%")
+    if (pool.apy) {
+      const numeric = parseFloat(pool.apy.replace(/[^0-9.]/g, ''))
+      if (!isNaN(numeric)) setAgentTargetYield(String(numeric))
+    }
+    setCreateStep(2)
+    showPage('create')
+  }
+
   const toggleSocial = (s) => {
     setAgentSocials(prev => prev.includes(s) ? prev.filter(x => x !== s) : [...prev, s])
   }
@@ -152,7 +177,8 @@ export function AppProvider({ children }) {
       agentRisk, setAgentRisk,
       agentRoyalty, setAgentRoyalty,
       agentListingPrice, setAgentListingPrice,
-      resetCreate, forkAgent,
+      resetCreate, forkAgent, createFromPool,
+      prevCreateStep,
       myAgents, addMyAgent,
     }}>
       {children}

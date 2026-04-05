@@ -125,7 +125,7 @@ export default function CreateAgent() {
         const apy = pool.apy ?? '—'
         const conf = pool.confidence ?? '—'
         setScanLines(prev => [...prev, {
-          t: `00:${String((idx + 1) + 1).padStart(2, '0')}`,
+          t: `00:${String((idx + 1) + 2).padStart(2, '0')}`,
           m: `${pool.name} (${pool.protocol}) — APY ${apy} · risk ${risk}/10 · conf ${conf}%`,
           c: (pool.riskScore ?? 0) > 6 ? 'warn' : pool.best ? 'ok' : '',
         }])
@@ -157,8 +157,9 @@ export default function CreateAgent() {
         }),
       })
       result = await res.json()
+      console.log('Deploy result:', result)
     } catch (e) {
-      result = { tokenId: INFT_NUM, txHash: '0x7f3a…d291', contract: '0x69242f…726C', proof: '0x4f2a…c831', network: 'Hedera EVM testnet' }
+      result = { tokenId: INFT_NUM, txHash: '0x7f3a…d291', contract: '0x69242f…726C', proof: '0x4f2a…c831', network: 'OG testnet' }
     }
     setDeployResult(result)
     addMyAgent({
@@ -628,10 +629,26 @@ export default function CreateAgent() {
             </div>
             <div className="create-side">
               <div className="side-title">Projection</div>
-              <div className="sum-row"><span className="sum-key">Primary pool</span><span className="sum-val">USDC/DAI</span></div>
-              <div className="sum-row"><span className="sum-key">Expected APY</span><span className="sum-val" style={{ color: 'var(--green)' }}>8.3%</span></div>
-              <div className="sum-row"><span className="sum-key">Win rate</span><span className="sum-val">91%</span></div>
-              <div className="sum-row"><span className="sum-key">Max drawdown</span><span className="sum-val" style={{ color: 'var(--green)' }}>0.3%</span></div>
+              {(() => {
+                const best = scanPools.find(p => p.best) || scanPools[0]
+                if (!best) return (
+                  <div style={{ fontSize: 10, color: 'var(--amber)', fontFamily: 'var(--mono)', marginTop: 8 }}>
+                    ← Run the scan first
+                  </div>
+                )
+                const riskColor = (best.riskScore ?? 10) <= 3 ? 'var(--green)' : (best.riskScore ?? 10) <= 6 ? 'var(--amber)' : 'var(--red)'
+                return (
+                  <>
+                    <div className="sum-row"><span className="sum-key">Primary pool</span><span className="sum-val">{best.name}</span></div>
+                    <div className="sum-row"><span className="sum-key">Protocol</span><span className="sum-val">{best.protocol}</span></div>
+                    <div className="sum-row"><span className="sum-key">Expected APY</span><span className="sum-val" style={{ color: 'var(--green)' }}>{best.apy ?? '—'}</span></div>
+                    <div className="sum-row"><span className="sum-key">Confidence</span><span className="sum-val" style={{ color: 'var(--blue)' }}>{best.confidence != null ? `${best.confidence}%` : '—'}</span></div>
+                    <div className="sum-row"><span className="sum-key">Risk score</span><span className="sum-val" style={{ color: riskColor }}>{best.riskScore != null ? `${best.riskScore}/10` : '—'}</span></div>
+                    <div className="sum-row"><span className="sum-key">Action</span><span className="sum-val" style={{ color: best.action === 'invest' ? 'var(--green)' : 'var(--amber)' }}>{best.action ?? '—'}</span></div>
+                    <div className="sum-row"><span className="sum-key">TVL</span><span className="sum-val">{best.tvl ?? '—'}</span></div>
+                  </>
+                )
+              })()}
             </div>
           </div>
         )}

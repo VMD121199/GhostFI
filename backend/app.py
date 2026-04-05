@@ -173,13 +173,12 @@ class DeployAgent(Resource):
 # Return all deployed agents for a wallet address
 class AgentList(Resource):
     def get(self):
-        address = request.args.get('address', '')
-        enrich  = request.args.get('enrich', 'false').lower() == 'true'
-        from services.agent_store import get_agents, enrich_from_chain
-        print(f"Fetching agents for address={address}, enrich={enrich}")
-        agents = get_agents(owner_address=address or None)
-        if enrich:
-            agents = enrich_from_chain(agents)
+        from services.agent_store import discover_onchain_agents, get_agents
+        address = request.args.get('address', '') or os.environ.get('AGENT_ADDRESS', '')
+        if address:
+            agents = discover_onchain_agents(address)
+        else:
+            agents = get_agents()
         return {'status': 'ok', 'agents': agents, 'count': len(agents)}
 
 

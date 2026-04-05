@@ -80,48 +80,78 @@ class INFTMinter:
             tx_hash = self.provider.eth.send_raw_transaction(signed.raw_transaction)
             receipt = self.provider.eth.wait_for_transaction_receipt(tx_hash)
 
-            # Parse Transfer event for token ID
-            token_id = "1"
+            # Parse tokenId — try MetadataUpdated first, then Transfer, then raw topics
+            token_id = None
             for log in receipt["logs"]:
+                if token_id:
+                    break
+                try:
+                    parsed = contract.events.MetadataUpdated().process_log(log)
+                    token_id = str(parsed["args"]["tokenId"])
+                    continue
+                except Exception:
+                    pass
                 try:
                     parsed = contract.events.Transfer().process_log(log)
                     token_id = str(parsed["args"]["tokenId"])
-                    break
-                except Exception:
                     continue
+                except Exception:
+                    pass
+                try:
+                    raw_topics = log.get("topics") or []
+                    if len(raw_topics) >= 2:
+                        candidate = int(raw_topics[1].hex(), 16)
+                        if 0 < candidate < 10_000_000:
+                            token_id = str(candidate)
+                except Exception:
+                    pass
 
-            print(f"✅ [iNFT] Minted! Token ID: {token_id}")
-            print(f"   TX: {tx_hash.hex()}")
+            if not token_id:
+                raise RuntimeError("Could not parse tokenId from mint receipt logs")
 
-            # Register on AgentRegistry
-            try:
-                print("📝 [iNFT] Registering agent on AgentRegistry...")
-                registry_abi = [{"name": "registerAgent", "type": "function", "stateMutability": "nonpayable",
-                                  "inputs": [{"name": "inftTokenId", "type": "string"},
-                                             {"name": "metadata", "type": "string"},
-                                             {"name": "privacyEnabled", "type": "bool"}],
-                                  "outputs": []}]
-                registry = self.provider.eth.contract(
-                    address=Web3.to_checksum_address(os.environ["AGENT_REGISTRY_ADDRESS"]),
-                    abi=registry_abi
-                )
-                reg_tx = registry.functions.registerAgent(
-                    token_id, metadata.storageUri or "0G_AI_AGENT", True
-                ).build_transaction({
-                    "from": owner,
-                    "nonce": self.provider.eth.get_transaction_count(owner),
-                    "gas": 200000,
-                    "gasPrice": self.provider.eth.gas_price,
-                })
-                signed_reg = self.signer.sign_transaction(reg_tx)
-                reg_hash = self.provider.eth.send_raw_transaction(signed_reg.raw_transaction)
-                self.provider.eth.wait_for_transaction_receipt(reg_hash)
-                print(f"✅ [iNFT] Registered on-chain! Registry TX: {reg_hash.hex()}")
-            except Exception as e:
-                print(f"⚠️  [iNFT] On-chain registration failed: {e}")
+            print(f"✅ [iNFT] Minted! Token ID: {token_id} | TX: {tx_hash.hex()}")
 
-            # Auto-update .env
-            self._update_env("MY_AGENT_INFT_ID", token_id)
+            # Register on AgentRegistry — only once per address (contract enforces this)
+            registry_addr = os.environ.get("AGENT_REGISTRY_ADDRESS")
+            if registry_addr:
+                try:
+                    registry_abi = [
+                        {"name": "registerAgent", "type": "function", "stateMutability": "nonpayable",
+                         "inputs": [{"name": "inftTokenId",    "type": "string"},
+                                    {"name": "metadata",       "type": "string"},
+                                    {"name": "privacyEnabled", "type": "bool"}],
+                         "outputs": []},
+                        {"name": "agents", "type": "function", "stateMutability": "view",
+                         "inputs": [{"name": "", "type": "address"}],
+                         "outputs": [{"name": "owner",          "type": "address"},
+                                     {"name": "inftTokenId",    "type": "string"},
+                                     {"name": "metadata",       "type": "string"},
+                                     {"name": "privacyEnabled", "type": "bool"},
+                                     {"name": "registeredAt",   "type": "uint256"}]},
+                    ]
+                    registry = self.provider.eth.contract(
+                        address=Web3.to_checksum_address(registry_addr), abi=registry_abi
+                    )
+                    already = registry.functions.agents(owner).call()[4] != 0
+                    if already:
+                        print(f"ℹ️  [iNFT] Already registered in AgentRegistry — skipping")
+                    else:
+                        reg_tx = registry.functions.registerAgent(
+                            token_id, metadata.storageUri or "0G_AI_AGENT", True
+                        ).build_transaction({
+                            "from": owner,
+                            "nonce": self.provider.eth.get_transaction_count(owner),
+                            "gas": 200000,
+                            "gasPrice": self.provider.eth.gas_price,
+                        })
+                        signed_reg = self.signer.sign_transaction(reg_tx)
+                        reg_hash = self.provider.eth.send_raw_transaction(signed_reg.raw_transaction)
+                        self.provider.eth.wait_for_transaction_receipt(reg_hash)
+                        print(f"✅ [iNFT] Registered! Registry TX: {reg_hash.hex()}")
+                except Exception as e:
+                    print(f"⚠️  [iNFT] Registry step failed: {e}")
+
+            self._append_env("MY_AGENT_INFT_ID", token_id)
             self._update_env("AGENT_ADDRESS", owner)
 
             return INFTResult(tokenId=token_id, contractAddress=contract_address,
