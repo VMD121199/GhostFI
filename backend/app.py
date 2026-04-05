@@ -14,6 +14,7 @@ api = Api(app)
 
 # ── /api/scan ────────────────────────────────────────────────────────────────
 # Scan pools via 0G Compute and return ranked results
+@app.route('/api/scan', methods=['POST'])
 class ScanPools(Resource):
     def post(self):
         body = request.get_json(silent=True) or {}
@@ -82,6 +83,7 @@ class ScanPools(Resource):
 
 # ── /api/agent/deploy ────────────────────────────────────────────────────────
 # Mint iNFT and deploy agent on Hedera EVM with full strategy config
+@app.route('/api/agent/deploy', methods=['POST'])
 class DeployAgent(Resource):
     def post(self):
         import json, base64
@@ -172,6 +174,7 @@ class DeployAgent(Resource):
 
 # ── /api/agents ──────────────────────────────────────────────────────────────
 # Return all deployed agents for a wallet address
+@app.route('/api/agents', methods=['GET'])
 class AgentList(Resource):
     def get(self):
         from services.agent_store import discover_onchain_agents, get_agents
@@ -185,6 +188,7 @@ class AgentList(Resource):
 
 # ── /api/agent/start ─────────────────────────────────────────────────────────
 # Start the autonomous agent loop
+@app.route('/api/agent/start', methods=['POST'])
 class StartAgent(Resource):
     def post(self):
         body = request.get_json(silent=True) or {}
@@ -205,6 +209,7 @@ class StartAgent(Resource):
 
 # ── /api/pool/risk ───────────────────────────────────────────────────────────
 # Returns per-factor risk breakdown for a specific pool (fetched or AI-derived)
+@app.route('/api/pool/risk', methods=['POST'])
 class PoolRisk(Resource):
     def post(self):
         body = request.get_json(silent=True) or {}
@@ -279,6 +284,7 @@ class PoolRisk(Resource):
 
 # ── /api/pools ───────────────────────────────────────────────────────────────
 # Return live pool list (read-only, no scan)
+@app.route('/api/pools', methods=['GET'])
 class PoolList(Resource):
     def get(self):
         sector = request.args.get('sector', '')
@@ -295,6 +301,7 @@ class PoolList(Resource):
 
 
 # ── /api/health ──────────────────────────────────────────────────────────────
+@app.route('/api/health', methods=['GET'])
 class Health(Resource):
     def get(self):
         return {
