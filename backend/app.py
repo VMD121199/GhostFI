@@ -131,6 +131,7 @@ class DeployAgent(Resource):
                 createdAt=datetime.now().isoformat(),
                 storageUri=storage_uri,
             )
+            print(metadata)
             result = minter.mint(metadata)
             response = {
                 'status': 'ok',

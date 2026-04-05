@@ -127,7 +127,7 @@ class INFTMinter:
         signer_address = self.signer.address
         to_address = Web3.to_checksum_address(recipient) if recipient else signer_address
 
-        token_id = "1"
+        token_id = "Unknown"
         receipt_hash = ""
 
         try:
@@ -138,60 +138,49 @@ class INFTMinter:
                 registry = self.provider.eth.contract(address=reg_addr, abi=REGISTRY_ABI)
                 print(f"iNFT contract: {contract_address} | Registry: {reg_addr}")
                 print(f"Metadata hash: {metadata_hash.hex()} | Encrypted URI length: {len(encrypted_uri)} chars")
-                print(f"URI: {encrypted_uri[:100]}...")
-                tx = registry.functions.mintAndRegister(
-                    contract_address, encrypted_uri, metadata_hash, True
-                ).build_transaction({
-                    "from": signer_address,
-                    "nonce": self.provider.eth.get_transaction_count(signer_address),
-                    "gas": 1000000,
-                    "gasPrice": int(self.provider.eth.gas_price * 1.5),
-                })
-                signed = self.signer.sign_transaction(tx)
-                tx_hash_bytes = self.provider.eth.send_raw_transaction(signed.raw_transaction)
-                receipt = self.provider.eth.wait_for_transaction_receipt(tx_hash_bytes)
-                receipt_hash = receipt["transactionHash"].hex()
+                
+                try:
+                    tx = registry.functions.mintAndRegister(
+                        contract_address, encrypted_uri, metadata_hash, True
+                    ).build_transaction({
+                        "from": signer_address,
+                        "nonce": self.provider.eth.get_transaction_count(signer_address),
+                        "gasPrice": int(self.provider.eth.gas_price * 1.5),
+                    })
+                    # Estimate gas dynamically
+                    tx["gas"] = int(self.provider.eth.estimate_gas(tx) * 1.2)
+                    
+                    signed = self.signer.sign_transaction(tx)
+                    tx_hash_bytes = self.provider.eth.send_raw_transaction(signed.raw_transaction)
+                    receipt = self.provider.eth.wait_for_transaction_receipt(tx_hash_bytes)
+                    receipt_hash = receipt["transactionHash"].hex()
 
-                for log in receipt["logs"]:
-                    try:
-                        parsed = registry.events.AgentRegistered().process_log(log)
-                        token_id = str(parsed["args"]["tokenId"])
-                        break
-                    except Exception:
-                        pass
+                    if receipt["status"] == 0:
+                        print(f"⚠️  [Registry] Transaction reverted. Falling back to simple mint...")
+                        return self._simple_mint(contract_address, to_address, encrypted_uri, metadata_hash, metadata)
 
-                print(f"✅ [Registry+iNFT] Factory Success! Token ID #{token_id} | TX: {receipt_hash}")
+                    token_id = "Unknown"
+                    for log in receipt["logs"]:
+                        try:
+                            parsed = registry.events.AgentRegistered().process_log(log)
+                            token_id = str(parsed["args"]["tokenId"])
+                            print(f"📦 Found AgentRegistered event! ID: {token_id}")
+                            break
+                        except Exception:
+                            continue
+
+                    print(f"✅ [Registry+iNFT] Factory Success! Token ID #{token_id} | TX: {receipt_hash}")
+                    self._update_env("MY_AGENT_INFT_ID", token_id)
+                    self._update_env("AGENT_ADDRESS", to_address)
+                    return INFTResult(tokenId=token_id, contractAddress=contract_address,
+                                      txHash=receipt_hash, metadata=metadata)
+
+                except Exception as e:
+                    print(f"⚠️  [Registry] Error: {e}. Falling back to simple mint...")
+                    return self._simple_mint(contract_address, to_address, encrypted_uri, metadata_hash, metadata)
 
             else:
-                print("⚠️  No REGISTRY address. Falling back to simple mint.")
-                contract = self.provider.eth.contract(address=contract_address, abi=INFT_ABI)
-
-                tx = contract.functions.mint(to_address, encrypted_uri, metadata_hash).build_transaction({
-                    "from": signer_address,
-                    "nonce": self.provider.eth.get_transaction_count(signer_address),
-                    "gas": 300000,
-                    "gasPrice": self.provider.eth.gas_price,
-                })
-                signed = self.signer.sign_transaction(tx)
-                tx_hash_bytes = self.provider.eth.send_raw_transaction(signed.raw_transaction)
-                receipt = self.provider.eth.wait_for_transaction_receipt(tx_hash_bytes)
-                receipt_hash = receipt["transactionHash"].hex()
-
-                for log in receipt["logs"]:
-                    try:
-                        parsed = contract.events.Transfer().process_log(log)
-                        token_id = str(parsed["args"]["tokenId"])
-                        break
-                    except Exception:
-                        pass
-
-                print(f"✅ [iNFT] Identity Created! Token ID: {token_id} | TX: {receipt_hash}")
-
-            self._update_env("MY_AGENT_INFT_ID", token_id)
-            self._update_env("AGENT_ADDRESS", to_address)
-
-            return INFTResult(tokenId=token_id, contractAddress=contract_address,
-                              txHash=receipt_hash, metadata=metadata)
+                return self._simple_mint(contract_address, to_address, encrypted_uri, metadata_hash, metadata)
 
         except Exception as e:
             print(f"❌ [iNFT] Mint failure: {e}")
@@ -203,6 +192,41 @@ class INFTMinter:
         print(f"🎭 [DRY-RUN] Mock Identity Minted: #{token_id}")
         return INFTResult(tokenId=token_id, contractAddress=contract_address,
                           txHash=tx_hash, metadata=metadata)
+
+    def _simple_mint(self, contract_address: str, to_address: str, encrypted_uri: str, metadata_hash: bytes, metadata: INFTMetadata) -> INFTResult:
+        print("📝 [Simple Mint] Falling back to direct iNFT contract mint...")
+        contract = self.provider.eth.contract(address=contract_address, abi=INFT_ABI)
+        signer_address = self.signer.address
+        
+        tx = contract.functions.mint(to_address, encrypted_uri, metadata_hash).build_transaction({
+            "from": signer_address,
+            "nonce": self.provider.eth.get_transaction_count(signer_address),
+            "gasPrice": self.provider.eth.gas_price,
+        })
+        tx["gas"] = int(self.provider.eth.estimate_gas(tx) * 1.2)
+        
+        signed = self.signer.sign_transaction(tx)
+        tx_hash_bytes = self.provider.eth.send_raw_transaction(signed.raw_transaction)
+        receipt = self.provider.eth.wait_for_transaction_receipt(tx_hash_bytes)
+        receipt_hash = receipt["transactionHash"].hex()
+
+        if receipt["status"] == 0:
+            raise RuntimeError(f"❌ [Simple Mint] Transaction REVERTED: {receipt_hash}")
+
+        token_id = "Unknown"
+        for log in receipt["logs"]:
+            try:
+                parsed = contract.events.Transfer().process_log(log)
+                token_id = str(parsed["args"]["tokenId"])
+                break
+            except Exception:
+                pass
+
+        print(f"✅ [iNFT] Identity Created! Token ID: {token_id} | TX: {receipt_hash}")
+        self._update_env("MY_AGENT_INFT_ID", token_id)
+        self._update_env("AGENT_ADDRESS", to_address)
+        return INFTResult(tokenId=token_id, contractAddress=contract_address,
+                          txHash=receipt_hash, metadata=metadata)
 
     def _update_env(self, key: str, value: str):
         env_path = os.path.join(os.getcwd(), ".env")
@@ -217,3 +241,37 @@ class INFTMinter:
                 f.write(content.strip() + "\n")
         except Exception as e:
             print(f"⚠️  [iNFT] Could not update .env: {e}")
+
+
+if __name__ == "__main__":
+    import datetime
+    
+    # Initialize minter
+    print("🚀 Initializing iNFT Minter for 0G Testnet...")
+    minter = INFTMinter()
+    
+    # Prepare metadata
+    timestamp = datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+    metadata = INFTMetadata(
+        agentId=f"privacy-ai-agent-{int(datetime.datetime.now().timestamp())}",
+        framework="0G Ghost v2",
+        capabilities=["on-chain trading", "sealed inference", "Triple-Proof verification"],
+        createdAt=timestamp,
+        modelAI="Llama-3-70b-TEE",
+        resource="0G Storage v1",
+        storageUri="zg://storage.testnet.0g.ai/agent-v2-identity"
+    )
+    
+    try:
+        # Mint to the address from USER_PRIVATE_KEY
+        result = minter.mint(metadata)
+        
+        print("\n" + "="*50)
+        print("🎉 [iNFT] MINT SUCCESSFUL!")
+        print(f"🔹 Token ID: {result.tokenId}")
+        print(f"🔹 TX Hash:  {result.txHash}")
+        print(f"🔹 Contract: {result.contractAddress}")
+        print("="*50)
+        
+    except Exception as e:
+        print(f"\n❌ FATAL: Execution failed: {e}")
