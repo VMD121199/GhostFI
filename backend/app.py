@@ -314,7 +314,7 @@ api.add_resource(PoolList,    '/api/pools')
 api.add_resource(PoolRisk,    '/api/pool/risk')
 
 if __name__ == '__main__':
-    port = int(os.environ.get('PORT', 5000))
+    port = int(os.environ.get('PORT', 10000))
     # debug = os.environ.get('FLASK_DEBUG', 'false').lower() == 'true'
     print(f"🚀 GhostFi backend — http://localhost:{port}")
     app.run(host='0.0.0.0', port=port, debug=False)
