@@ -241,37 +241,3 @@ class INFTMinter:
                 f.write(content.strip() + "\n")
         except Exception as e:
             print(f"⚠️  [iNFT] Could not update .env: {e}")
-
-
-if __name__ == "__main__":
-    import datetime
-    
-    # Initialize minter
-    print("🚀 Initializing iNFT Minter for 0G Testnet...")
-    minter = INFTMinter()
-    
-    # Prepare metadata
-    timestamp = datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S")
-    metadata = INFTMetadata(
-        agentId=f"privacy-ai-agent-{int(datetime.datetime.now().timestamp())}",
-        framework="0G Ghost v2",
-        capabilities=["on-chain trading", "sealed inference", "Triple-Proof verification"],
-        createdAt=timestamp,
-        modelAI="Llama-3-70b-TEE",
-        resource="0G Storage v1",
-        storageUri="zg://storage.testnet.0g.ai/agent-v2-identity"
-    )
-    
-    try:
-        # Mint to the address from USER_PRIVATE_KEY
-        result = minter.mint(metadata)
-        
-        print("\n" + "="*50)
-        print("🎉 [iNFT] MINT SUCCESSFUL!")
-        print(f"🔹 Token ID: {result.tokenId}")
-        print(f"🔹 TX Hash:  {result.txHash}")
-        print(f"🔹 Contract: {result.contractAddress}")
-        print("="*50)
-        
-    except Exception as e:
-        print(f"\n❌ FATAL: Execution failed: {e}")
