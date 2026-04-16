@@ -13,7 +13,7 @@ export default function PoolDetail() {
 
   useEffect(() => {
     if (page !== 'pool-detail' || !poolDetail) return
-    fetch('http://localhost:5000/api/pool/risk', {
+    fetch('https://ghostfi-1.onrender.com/api/pool/risk', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({
