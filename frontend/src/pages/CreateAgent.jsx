@@ -100,7 +100,7 @@ export default function CreateAgent() {
 
     let data = { pools: [] }
     try {
-      const response = await fetch('http://localhost:5000/api/scan', {
+      const response = await fetch('https://ghostfi-1.onrender.com/api/scan', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
@@ -145,7 +145,7 @@ export default function CreateAgent() {
     setDeploying(true)
     let result = null
     try {
-      const res = await fetch('http://localhost:5000/api/agent/deploy', {
+      const res = await fetch('https://ghostfi-1.onrender.com/api/agent/deploy', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
