@@ -100,7 +100,7 @@ export default function CreateAgent() {
 
     let data = { pools: [] }
     try {
-      const response = await fetch('https://ghostfi-1.onrender.com/api/scan', {
+      const response = await fetch('http://localhost:5000/api/scan', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
@@ -145,7 +145,7 @@ export default function CreateAgent() {
     setDeploying(true)
     let result = null
     try {
-      const res = await fetch('https://ghostfi-1.onrender.com/api/agent/deploy', {
+      const res = await fetch('http://localhost:5000/api/agent/deploy', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
@@ -194,7 +194,7 @@ export default function CreateAgent() {
             Agent deployed &amp; iNFT minted
           </div>
           <div style={{ fontSize: 12, color: 'var(--t2)', marginBottom: 28, lineHeight: 1.8 }}>
-            <strong style={{ color: 'var(--white)' }}>{agentName || 'StableGhost v1'}</strong> is live on Hedera EVM.<br />
+            <strong style={{ color: 'var(--white)' }}>{agentName || 'StableGhost v1'}</strong> is live on 0G Network.<br />
             Your iNFT is listed on GhostFi marketplace.
           </div>
           <div className="neu-well" style={{ textAlign: 'left', marginBottom: 24 }}>
@@ -667,7 +667,7 @@ export default function CreateAgent() {
                 <div className="inft-avatar">{agentEmoji}</div>
                 <div>
                   <div style={{ fontSize: 16, fontWeight: 700, marginBottom: 4 }}>{agentName || 'StableGhost v1'}</div>
-                  <div style={{ fontSize: 10, fontFamily: 'var(--mono)', color: 'var(--t3)' }}>GhostFi iNFT · #{INFT_NUM} · Hedera EVM</div>
+                  <div style={{ fontSize: 10, fontFamily: 'var(--mono)', color: 'var(--t3)' }}>GhostFi iNFT · #{INFT_NUM} · 0G Network</div>
                   <div className="inft-traits" style={{ marginTop: 8 }}>
                     <span className="badge badge-green">{agentSector}</span>
                     <span className="badge badge-purple">0G Verified</span>
@@ -693,7 +693,7 @@ export default function CreateAgent() {
               {/* Hedera EVM info */}
               <div className="neu-well" style={{ marginBottom: 18 }}>
                 <div style={{ fontSize: 9, fontFamily: 'var(--mono)', color: 'var(--t3)', letterSpacing: '.08em', textTransform: 'uppercase', marginBottom: 7 }}>
-                  Minting on ⬡ Hedera EVM
+                  Minting on ⬡ 0G Testnet
                 </div>
                 <div style={{ fontSize: 11, color: 'var(--t2)', lineHeight: 1.9, fontFamily: 'var(--mono)' }}>
                   Standard: ERC-7857 (ERC721 extension)<br />

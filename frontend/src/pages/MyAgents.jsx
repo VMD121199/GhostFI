@@ -17,8 +17,8 @@ export default function MyAgents() {
   useEffect(() => {
     if (page !== 'myagents') return
     const url = walletAddress
-      ? `https://ghostfi-1.onrender.com/api/agents?address=${walletAddress}`
-      : 'https://ghostfi-1.onrender.com/api/agents'
+      ? `http://localhost:5000/api/agents?address=${walletAddress}`
+      : 'http://localhost:5000/api/agents'
     fetch(url)
       .then(r => r.json())
       .then(data => { if (data.agents) setApiAgents(data.agents) })

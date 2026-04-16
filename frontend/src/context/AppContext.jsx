@@ -1,4 +1,4 @@
-import { createContext, useContext, useState } from 'react'
+import { createContext, useContext, useState, useEffect, useRef } from 'react'
 
 const AppContext = createContext(null)
 
@@ -32,6 +32,31 @@ export function AppProvider({ children }) {
 
   // Minted agents list — persists across navigation
   const [myAgents, setMyAgents] = useState([])
+
+  // Track the active provider so we can remove the listener on cleanup
+  const activeProviderRef = useRef(null)
+
+  useEffect(() => {
+    const handleAccountsChanged = (accounts) => {
+      if (accounts.length === 0 || accounts[0].toLowerCase() !== walletAddress?.toLowerCase()) {
+        setWalletConnected(false)
+        setWalletAddress(null)
+        setPage('landing')
+        window.scrollTo(0, 0)
+      }
+    }
+
+    const provider = activeProviderRef.current
+    if (walletConnected && provider) {
+      provider.on('accountsChanged', handleAccountsChanged)
+    }
+
+    return () => {
+      if (provider) {
+        provider.removeListener('accountsChanged', handleAccountsChanged)
+      }
+    }
+  }, [walletConnected, walletAddress])
 
   const addMyAgent = (agent) => {
     setMyAgents(prev => [agent, ...prev])
@@ -67,19 +92,39 @@ export function AppProvider({ children }) {
     try {
       let address = null
       if (walletName === 'MetaMask') {
-        if (!window.ethereum?.isMetaMask) {
+        // Support multiple wallet extensions: find MetaMask's provider specifically
+        let provider = window.ethereum
+        if (window.ethereum?.providers?.length) {
+          provider = window.ethereum.providers.find(p => p.isMetaMask) || null
+        }
+        if (!provider?.isMetaMask) {
           window.open('https://metamask.io/download/', '_blank')
           return
         }
-        const accounts = await window.ethereum.request({ method: 'eth_requestAccounts' })
+        // Revoke old permissions so MetaMask treats this as a fresh connection
+        try {
+          await provider.request({
+            method: 'wallet_revokePermissions',
+            params: [{ eth_accounts: {} }],
+          })
+        } catch (_) {
+          // wallet_revokePermissions not supported on older MetaMask — continue anyway
+        }
+        const accounts = await provider.request({ method: 'eth_requestAccounts' })
         address = accounts[0]
+        activeProviderRef.current = provider
       } else if (walletName === 'Coinbase Wallet') {
-        if (!window.ethereum) {
+        let provider = window.ethereum
+        if (window.ethereum?.providers?.length) {
+          provider = window.ethereum.providers.find(p => p.isCoinbaseWallet) || null
+        }
+        if (!provider?.isCoinbaseWallet) {
           window.open('https://www.coinbase.com/wallet', '_blank')
           return
         }
-        const accounts = await window.ethereum.request({ method: 'eth_requestAccounts' })
+        const accounts = await provider.request({ method: 'eth_requestAccounts' })
         address = accounts[0]
+        activeProviderRef.current = provider
       } else if (walletName === 'WalletConnect') {
         alert('WalletConnect coming soon')
         return
